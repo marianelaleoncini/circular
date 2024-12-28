@@ -1,1 +1,198 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+$circular-primary-palette: mat.define-palette((
+  50: #EBF1E6,   // Lighter color
+  100: #C1D2B1,  // Light color
+  200: #A3BC8B,  // Default color
+  300: #799E56,  // Dark color
+  400: #5F8B35,  // Darker color 
+  500: #376E03,  // Primary color
+  600: #326403,
+  700: #274E02,
+  800: #1E3D02,
+  900: #172E01,  // Darkest color
+  contrast: (
+    50: black,
+    100: black,
+    200: black,
+    300: black,
+    400: black,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white
+  )
+));
+
+$circular-accent-palette: mat.define-palette((
+  50: #F4F5F8,   // Lighter color
+  100: #DCE1EA,  // Light color
+  200: #CBD2E0,  // Default color
+  300: #B3BDD2,  // Dark color
+  400: #A5B1C9,  // Darker color
+  500: #8E9DBC,  // Primary color
+  600: #818FAB,
+  700: #656F85,
+  800: #4E5667,
+  900: #3C424F,  // Darkest color
+  contrast: (
+    50: black,
+    100: black,
+    200: black,
+    300: black,
+    400: black,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white
+  )
+));
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$circular-primary: mat.define-palette($circular-primary-palette);
+$circular-accent: mat.define-palette($circular-accent-palette, 200, 100, 400);
+
+// The warn palette is optional (defaults to red).
+$circular-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$circular-theme: mat.define-light-theme((
+  color: (
+    primary: $circular-primary,
+    accent: $circular-accent,
+    warn: $circular-warn,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0
+));
+
+/* $button-theme: mat.define-button-theme((
+  raised: (
+    color: white, // Texto blanco para botones elevados
+    background: mat.get-color-from-palette($circular-primary, 500),
+  ),
+  flat: (
+    color: mat.get-color-from-palette($circular-primary, 500), // Texto azul para botones planos
+  ),
+  stroked: (
+    color: mat.get-color-from-palette($circular-primary, 500), // Texto azul para botones con borde
+  ),
+  fab: (
+    color: white, // Texto blanco para FAB
+    background: mat.get-color-from-palette($circular-accent, 500),
+  ),
+));
+
+// Aplicar los estilos personalizados al tema
+@include mat.button-theme($button-theme); */
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($circular-theme);
+
+
+$primary-color: #376E03;
 /* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.container {
+  width: 100%;
+  padding: 0 15px;
+  margin: 0 auto;
+
+  @media (min-width: 576px) {
+    max-width: 540px;
+  }
+
+  @media (min-width: 768px) {
+    max-width: 720px;
+  }
+
+  @media (min-width: 992px) {
+    max-width: 960px;
+  }
+
+  @media (min-width: 1200px) {
+    max-width: 1140px;
+  }
+}
+
+/* Fila (row) */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;  /* Ajuste para los espacios */
+  margin-left: -15px;
+}
+
+/* Columna (col) */
+.col {
+  padding-right: 15px;
+  padding-left: 15px;
+  flex: 1 1 0%; /* Hace que las columnas sean flexibles */
+}
+
+/* Tamaños de columnas para distintos tamaños de pantalla */
+
+/* Para pantallas extra pequeñas (móviles) */
+@media (max-width: 374px) {
+  .col-12 { flex: 0 0 100%; } /* 100% del ancho */
+  .col-6 { flex: 0 0 50%; }   /* 50% del ancho */
+  .col-4 { flex: 0 0 33.33%; } /* 33.33% del ancho */
+}
+
+/* Para pantallas pequeñas (móviles) */
+@media (min-width: 375px) and (max-width: 575px) {
+  .col-12 { flex: 0 0 100%; } /* 100% del ancho */
+  .col-6 { flex: 0 0 50%; }   /* 50% del ancho */
+  .col-4 { flex: 0 0 33.33%; } /* 33.33% del ancho */
+}
+
+/* Para pantallas medianas (tablets) */
+@media (min-width: 576px) and (max-width: 767px) {
+  .col-12 { flex: 0 0 100%; } /* 100% del ancho */
+  .col-6 { flex: 0 0 50%; }   /* 50% del ancho */
+  .col-4 { flex: 0 0 33.33%; } /* 33.33% del ancho */
+  .col-3 { flex: 0 0 25%; }    /* 25% del ancho */
+}
+
+/* Para pantallas grandes (escritorios) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .col-12 { flex: 0 0 100%; }  /* 100% del ancho */
+  .col-6 { flex: 0 0 50%; }    /* 50% del ancho */
+  .col-4 { flex: 0 0 33.33%; } /* 33.33% del ancho */
+  .col-3 { flex: 0 0 25%; }    /* 25% del ancho */
+}
+
+/* Para pantallas muy grandes (escritorios grandes) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .col-12 { flex: 0 0 100%; }  /* 100% del ancho */
+  .col-6 { flex: 0 0 50%; }    /* 50% del ancho */
+  .col-4 { flex: 0 0 33.33%; } /* 33.33% del ancho */
+  .col-3 { flex: 0 0 25%; }    /* 25% del ancho */
+}
+
+/* Para pantallas extra grandes (pantallas de escritorio grandes) */
+@media (min-width: 1200px) {
+  .col-12 { flex: 0 0 100%; }  /* 100% del ancho */
+  .col-6 { flex: 0 0 50%; }    /* 50% del ancho */
+  .col-4 { flex: 0 0 33.33%; } /* 33.33% del ancho */
+  .col-3 { flex: 0 0 25%; }    /* 25% del ancho */
+}
