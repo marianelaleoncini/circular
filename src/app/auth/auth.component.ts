@@ -8,12 +8,12 @@ import {
 import { AuthService } from './auth.service';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
-import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LoadingComponent } from '../common/loading/loading.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth',
@@ -22,7 +22,6 @@ import { LoadingComponent } from '../common/loading/loading.component';
     ReactiveFormsModule,
     CommonModule,
     MatInputModule,
-    MatCardModule,
     MatIconModule,
     MatButtonModule,
     MatDividerModule,
@@ -38,14 +37,21 @@ export class AuthComponent implements OnInit {
   isLoginMode: boolean = true; // Alternar entre login y registro
   isForgotPassword: boolean = false; // Mostrar formulario de restablecimiento de contraseña
   isLoading: boolean = false; // Mostrar spinner de carga
+  hide: boolean = true; // Ocultar contraseña
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {}
 
   ngOnInit() {
+    this.authService.getCurrentUser().subscribe((user) => {
+      if (user) {
+        this.router.navigate(['/home']); // Redirige al Home si ya está autenticado
+      }
+    });
     this.initForms();
   }
 

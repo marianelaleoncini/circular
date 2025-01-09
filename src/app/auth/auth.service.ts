@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import firebase from 'firebase/compat/app';
+import { map, Observable } from 'rxjs';
 
 
 @Injectable({
@@ -8,6 +9,10 @@ import firebase from 'firebase/compat/app';
 })
 export class AuthService {
   constructor(public afAuth: AngularFireAuth) {}
+  
+  isLoggedIn(): Observable<boolean> {
+    return this.afAuth.authState.pipe(map((user) => !!user));
+  }
 
   // Iniciar sesión con Google
   loginWithGoogle() {
@@ -37,5 +42,10 @@ export class AuthService {
   // Obtener el usuario actual
   getCurrentUser() {
     return this.afAuth.authState;
+  }
+
+  // Confirmar restablecimiento de contraseña
+  confirmPasswordReset(oobCode: string, newPassword: string) {
+    return this.afAuth.confirmPasswordReset(oobCode, newPassword);
   }
 }

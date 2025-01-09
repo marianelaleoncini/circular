@@ -1,0 +1,49 @@
+.bottom-navigation {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 64px;
+  background-color: #d8e3d8;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.navigation-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-transform: none;
+  color: #2d752d;
+  font-size: 14px;
+  height: 100%;
+
+  mat-icon {
+    font-size: 24px;
+    margin: 4px;
+    width: 100%;
+    height: 24px;
+  }
+
+  &:hover {
+    background-color: rgba(45, 117, 45, 0.1);
+  }
+}
+
+.navigation-tab.active {
+  color: #1b5e20;
+  font-weight: bold;
+}
+
+@media (min-width: 600px) {
+  /* Estilos para pantallas más grandes (tabletas y escritorios) */
+  .bottom-navigation {
+    top: 0;
+  }
+
+  .navigation-tab {
+    flex-direction: row;
+  }
+}

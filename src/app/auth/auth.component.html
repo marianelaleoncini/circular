@@ -28,7 +28,21 @@
       <!-- Campo de Contraseña -->
       <mat-form-field class="full-width">
         <mat-label>Contraseña</mat-label>
-        <input matInput formControlName="password" type="password" required />
+        <input
+          matInput
+          formControlName="password"
+          [type]="hide ? 'password' : 'text'"
+          required
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="hide = !hide"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hide"
+        >
+          <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+        </button>
         <mat-error *ngIf="isControlInvalid('email', getForm())">
           La contraseña debe tener al menos 6 caracteres.
         </mat-error>
@@ -40,9 +54,18 @@
         <input
           matInput
           formControlName="confirmPassword"
-          type="password"
+          [type]="hide ? 'password' : 'text'"
           required
         />
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="hide = !hide"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hide"
+        >
+          <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+        </button>
         <mat-error *ngIf="registerForm.get('confirmPassword')?.invalid">
           Las contraseñas deben coincidir.
         </mat-error>
@@ -73,14 +96,14 @@
       {{
         isLoginMode
           ? "¿No tienes cuenta? Regístrate"
-          : "¿Ya tienes cuenta? Inicia Sesión"
+          : "¿Ya tienes cuenta? Inicia sesión"
       }}
     </button>
   </ng-container>
   <ng-container *ngIf="isForgotPassword">
     <h1>Restablece la contraseña</h1>
     <p>
-      Escribe la dirección de correo electrónico vinculados a tu cuenta de
+      Escribe la dirección de correo electrónico vinculado a tu cuenta de
       Circular y te enviaremos un mensaje.
     </p>
     <form
