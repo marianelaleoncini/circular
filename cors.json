@@ -1,0 +1,15 @@
+[
+    {
+      "origin": ["http://localhost:4200"],
+      "method": ["GET", "POST", "PUT", "DELETE"],
+      "maxAgeSeconds": 3600,
+      "responseHeader": ["Content-Type", "Authorization"]
+    },
+    {
+      "origin": ["https://tu-dominio-en-produccion.com"],
+      "method": ["GET", "POST", "PUT", "DELETE"],
+      "maxAgeSeconds": 3600,
+      "responseHeader": ["Content-Type", "Authorization"]
+    }
+  ]
+  

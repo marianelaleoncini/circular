@@ -1,1 +1,13 @@
-<p>posts works!</p>
+<mat-toolbar>
+  <button mat-icon-button class="example-icon" aria-label="arrow back">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>Mis publicaciones</span>
+</mat-toolbar>
+<mat-tab-group>
+    <mat-tab label="Nueva">
+        <app-post></app-post>
+    </mat-tab>
+    <mat-tab label="Publicadas"> Content 2 </mat-tab>
+    <mat-tab label="Inactivas"> Content 3 </mat-tab>
+  </mat-tab-group>

@@ -1,0 +1,25 @@
+.post {
+  margin: 1rem
+}
+.post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.post-image {
+  max-width: 250px;
+  height: auto;
+  margin-top: 16px;
+}
+
+@media (min-width: 600px) {
+  /* Estilos para pantallas más grandes (tabletas y escritorios) */
+  .post {
+    margin: 1.5rem
+  }
+
+  .post-form {
+   width: 50%;
+  }
+}

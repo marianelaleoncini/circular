@@ -3,13 +3,21 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import firebase from 'firebase/compat/app';
 import { map, Observable } from 'rxjs';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   constructor(public afAuth: AngularFireAuth) {}
+  currentUser: any;
   
+  setCurrentUser(user: any): void {
+    this.currentUser = user;
+  }
+
+  getUser(): any {
+    return this.currentUser;
+  }
+
   isLoggedIn(): Observable<boolean> {
     return this.afAuth.authState.pipe(map((user) => !!user));
   }
