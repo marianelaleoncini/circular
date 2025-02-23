@@ -1,0 +1,46 @@
+.post-card {
+    background-color: #d8e3d8;
+    margin: 12px 5px;
+    border-radius: 8px;
+  }
+  
+  .post-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+  }
+  
+  .profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+  }
+  
+  .user-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .post-image {
+    object-fit: cover;
+    object-position: center;
+    max-height: 360px;
+    width: 100%;
+  }
+  
+  .post-content {
+    padding: 10px;
+    &-description {
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+  }
+  
+  @media (min-width: 600px) {
+    .post-card {
+      width: 600px;
+    }
+  }
+  

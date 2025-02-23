@@ -38,11 +38,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class PostComponent {
   postForm: FormGroup;
   categories = [
-    'Plásticos',
-    'Metales',
-    'Textiles',
+    'Cartón',
     'Electrónica',
+    'Madera',
+    'Metales',
+    'Neumáticos',
     'Papel',
+    'Plásticos',
+    'Textiles',
     'Vidrio',
     'Otros',
   ];

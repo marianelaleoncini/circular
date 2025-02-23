@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PostComponent } from './post/post.component';
+import { PostsListComponent } from './posts-list/posts-list.component';
 
 @Component({
   selector: 'app-posts',
@@ -14,7 +15,7 @@ import { PostComponent } from './post/post.component';
     MatButtonModule,
     MatTabsModule,
     PostComponent,
-    PostComponent,
+    PostsListComponent,
   ],
   templateUrl: './posts.component.html',
   styleUrl: './posts.component.scss',
