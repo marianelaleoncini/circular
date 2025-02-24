@@ -38,6 +38,7 @@ export class AuthComponent implements OnInit {
   isForgotPassword: boolean = false; // Mostrar formulario de restablecimiento de contraseña
   isLoading: boolean = false; // Mostrar spinner de carga
   hide: boolean = true; // Ocultar contraseña
+  errorMessage: string = ''; // Mensaje de error
 
   constructor(
     private fb: FormBuilder,
@@ -95,7 +96,9 @@ export class AuthComponent implements OnInit {
         this.isLoading = false;
       })
       .catch((error) => {
-        console.error('Error al iniciar sesión:', error);
+        if (error.code === 'auth/invalid-credential') {
+          this.errorMessage = 'Email o contraseña incorrectos';
+        }
         this.isLoading = false;
       });
   }

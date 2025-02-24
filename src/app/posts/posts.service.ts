@@ -28,6 +28,17 @@ export class PostService {
   }
 
   /**
+   * Obtiene todos los posts ACTIVOS
+   */
+  getHomePosts(): Observable<any[]> {
+    return this.firestore
+      .collection('posts', (ref) =>
+        ref.where('isActive', '==', true)
+      )
+      .valueChanges({ idField: 'id' });
+  }
+
+  /**
    * Obtiene todos los posts ACTIVOS del usuario actual
    */
   getActivePosts(): Observable<any[]> {

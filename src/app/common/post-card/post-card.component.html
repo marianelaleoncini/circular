@@ -1,16 +1,28 @@
 <div class="post-card">
-    <div class="post-header">
-      <img [src]="post.imageUrl" alt="Foto de perfil" class="profile-img">
-      <div class="user-info">
-        <span class="user-name">Esteban</span>
-        <span class="user-location">CABA</span>
-      </div>
+  <div class="post-header">
+    <img [src]="post.imageUrl" alt="Foto de perfil" class="profile-img" />
+    <div class="user-info">
+      <span class="user-name">Esteban</span>
+      <span class="user-location">CABA</span>
     </div>
-    <img [src]="post.imageUrl" alt="Imagen del post" class="post-image" />
-    <div class="post-content">
-      <div>{{ post.title }}</div>
-      <div class="post-content-description">{{ post.description }}</div>
-      <div><strong> {{ post.price | currency }}</strong></div>
+  </div>
+  <img [src]="post.imageUrl" alt="Imagen del post" class="post-image" />
+  <div class="post-content">
+    <div>{{ post.title }}</div>
+    <div class="post-content-description">{{ post.description }}</div>
+    <div>
+      <strong> {{ post.price | currency }}</strong>
     </div>
-  </div> 
-  
+  </div>
+  <div *ngIf="use !== 'home'" class="post-actions">
+    <button mat-raised-button color="primary" class="action-button">
+      Editar
+    </button>
+    <button mat-raised-button color="primary" class="action-button">
+      {{ post.isActive ? "Desactivar" : "Activar" }}
+    </button>
+    <button mat-raised-button color="primary" class="action-button" (click)="onDelete(post.id)">
+      Eliminar
+    </button>
+  </div>
+</div>

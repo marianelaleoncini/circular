@@ -13,19 +13,28 @@ import { PostCardComponent } from '../../common/post-card/post-card.component';
 })
 export class PostsListComponent {
   postList: any[] = [];
+  active: boolean = false;
 
   constructor(private postService: PostService) {}
-  @Input() active = true;
+  @Input() use: 'home' | 'active-post' | 'inactive-post' = 'home';
 
   ngOnInit(): void {
-    if (this.active) {
+    switch (this.use) {
+      case 'active-post':
       this.postService.getActivePosts().subscribe((posts) => {
         this.postList = posts;
       });
-    } else {
+      break;
+      case 'inactive-post':
       this.postService.getInactivePosts().subscribe((posts) => {
         this.postList = posts;
       });
+      break;
+      case 'home':
+      this.postService.getHomePosts().subscribe((posts) => {
+        this.postList = posts;
+      });
+      break;
     }
   }
 }

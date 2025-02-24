@@ -8,6 +8,6 @@
     <mat-tab label="Nueva">
         <app-post></app-post>
     </mat-tab>
-    <mat-tab label="Publicadas"> <app-posts-list></app-posts-list> </mat-tab>
-    <mat-tab label="Inactivas"> <app-posts-list [active]="false"></app-posts-list> </mat-tab>
+    <mat-tab label="Publicadas"> <app-posts-list use="active-post"></app-posts-list> </mat-tab>
+    <mat-tab label="Inactivas"> <app-posts-list use="inactive-post"></app-posts-list> </mat-tab>
   </mat-tab-group>
