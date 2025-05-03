@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { finalize, tap } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
 
 @Injectable({
@@ -18,6 +18,9 @@ export class PostService {
     this.userId = this.authService.currentUser.uid;
   }
 
+  private selectedTabSubject = new BehaviorSubject<number>(0);
+  selectedTab$ = this.selectedTabSubject.asObservable();
+
   // Crear una nueva publicación
   addPost(post: any): Promise<void> {
     const postId = this.firestore.createId();
@@ -27,14 +30,17 @@ export class PostService {
       .set({ ...post, id: postId });
   }
 
+  // Recuperar una publicación
+  getPost(postId: string): Observable<any> {
+    return this.firestore.collection('posts').doc(postId).valueChanges();
+  }
+
   /**
    * Obtiene todos los posts ACTIVOS
    */
   getHomePosts(): Observable<any[]> {
     return this.firestore
-      .collection('posts', (ref) =>
-        ref.where('isActive', '==', true)
-      )
+      .collection('posts', (ref) => ref.where('isActive', '==', true))
       .valueChanges({ idField: 'id' });
   }
 
@@ -93,5 +99,13 @@ export class PostService {
         )
         .subscribe();
     });
+  }
+
+  toggleActive(postId: string, isActive: boolean): Promise<void> {
+    return this.updatePost(postId, { isActive });
+  }
+
+  setSelectedTab(index: number) {
+    this.selectedTabSubject.next(index);
   }
 }

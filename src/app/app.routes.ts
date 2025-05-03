@@ -12,6 +12,7 @@ export const routes: Routes = [
   { path: 'auth', component: AuthComponent },
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },
   { path: 'posts', component: PostsComponent, canActivate: [authGuard] },
+  { path: 'posts/:id', component: PostsComponent, canActivate: [authGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
   { path: 'chat', component: ChatComponent, canActivate: [authGuard] },
   { path: 'reset-password', component: ResetPasswordComponent },

@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PostService } from '../posts.service';
 import { AuthService } from '../../auth/auth.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -52,13 +52,17 @@ export class PostComponent {
   imageUrl: string | null = null;
   isLoading = false;
   uploadingImage = false;
+  postId: string = '';
+  @Input() shouldResetForm = false;
 
   constructor(
     private fb: FormBuilder,
     private postService: PostService,
     private authService: AuthService,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private postsService: PostService
   ) {
     this.postForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(50)]],
@@ -66,6 +70,38 @@ export class PostComponent {
       price: ['', [Validators.required, Validators.min(0)]],
       category: ['', Validators.required],
       isActive: [true],
+    });
+
+    this.route.paramMap.subscribe((params) => {
+      this.postId = params.get('id') || '';
+
+      if (this.postId) {
+        this.loadPostData();
+      }
+    });
+  }
+  
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['shouldResetForm']) {
+      this.updateData();
+    }
+  }
+
+  updateData() {
+    this.resetForm();
+  }
+
+  resetForm() {
+    this.postForm.reset();
+    this.imageUrl = null;
+  }
+
+  loadPostData() {
+    this.postsService.getPost(this.postId).subscribe((post: any) => {
+      console.log(post);
+      if (post) {
+        this.postForm.patchValue(post); // Rellena los campos con los datos del post
+      }
     });
   }
 

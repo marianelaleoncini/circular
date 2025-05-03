@@ -4,10 +4,14 @@
   </button>
   <span>Mis publicaciones</span>
 </mat-toolbar>
-<mat-tab-group>
-    <mat-tab label="Nueva">
-        <app-post></app-post>
-    </mat-tab>
-    <mat-tab label="Publicadas"> <app-posts-list use="active-post"></app-posts-list> </mat-tab>
-    <mat-tab label="Inactivas"> <app-posts-list use="inactive-post"></app-posts-list> </mat-tab>
-  </mat-tab-group>
+<mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="onTabChange()">
+  <mat-tab label="Nueva">
+    <app-post [shouldResetForm]="shouldResetForm"></app-post>
+  </mat-tab>
+  <mat-tab label="Publicadas">
+    <app-posts-list use="active-post"></app-posts-list>
+  </mat-tab>
+  <mat-tab label="Inactivas">
+    <app-posts-list use="inactive-post"></app-posts-list>
+  </mat-tab>
+</mat-tab-group>

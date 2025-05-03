@@ -6,7 +6,19 @@
       <span class="user-location">CABA</span>
     </div>
   </div>
-  <img [src]="post.imageUrl" alt="Imagen del post" class="post-image" />
+  
+   <!-- Placeholder con fondo gris y efecto blur -->
+   <div *ngIf="!imageLoaded" class="post-image-placeholder"></div>
+
+   <!-- Imagen real, se muestra cuando se carga completamente -->
+   <img 
+     [src]="post.imageUrl" 
+     alt="Imagen del post" 
+     class="post-image"
+     (load)="imageLoaded = true"
+     [class.loaded]="imageLoaded"
+   />
+
   <div class="post-content">
     <div>{{ post.title }}</div>
     <div class="post-content-description">{{ post.description }}</div>
@@ -15,13 +27,23 @@
     </div>
   </div>
   <div *ngIf="use !== 'home'" class="post-actions">
-    <button mat-raised-button color="primary" class="action-button">
+    <button mat-raised-button color="primary" class="action-button" (click)="onEdit(post.id)">
       Editar
     </button>
-    <button mat-raised-button color="primary" class="action-button">
+    <button
+      mat-raised-button
+      color="primary"
+      class="action-button"
+      (click)="onToggleActive(post.id, post.isActive)"
+    >
       {{ post.isActive ? "Desactivar" : "Activar" }}
     </button>
-    <button mat-raised-button color="primary" class="action-button" (click)="onDelete(post.id)">
+    <button
+      mat-raised-button
+      color="primary"
+      class="action-button"
+      (click)="onDelete(post.id)"
+    >
       Eliminar
     </button>
   </div>

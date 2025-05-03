@@ -1,7 +1,6 @@
 <div class="circular-container">
-    <app-navigation class="navigation"></app-navigation>
-    <div class="content">
-        <router-outlet></router-outlet>
-    </div>
+  <app-navigation *ngIf="isAuthenticated" class="navigation"></app-navigation>
+  <div [class]="isAuthenticated ? 'content' : 'content-full'">
+    <router-outlet></router-outlet>
+  </div>
 </div>
-<!-- Bottom Navigation para móviles -->
