@@ -33,6 +33,7 @@ export class PostsListComponent {
       case 'home':
       this.postService.getHomePosts().subscribe((posts) => {
         this.postList = posts;
+        console.log('Posts from home:', this.postList);
       });
       break;
     }

@@ -1,0 +1,32 @@
+.chat-container {
+  display: flex;
+  height: calc(100vh - 64px);
+  flex-direction: column;
+
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+app-chat-list {
+  flex: 1;
+  max-width: 100%;
+}
+
+app-chat-list,
+app-chat-room {
+  flex: 1;
+}
+
+@media (min-width: 600px) {
+  app-chat-room {
+    flex: 2;
+    max-width: 100%;
+  }
+  app-chat-list {
+    max-width: 350px;
+    border-right: 1px solid #ccc;
+  }
+  .chat-container {
+    flex-direction: row;
+  }
+}

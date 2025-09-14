@@ -1,3 +1,4 @@
+import { ChatService } from './../../chat/chat.service';
 import { PostService } from './../../posts/posts.service';
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
@@ -17,7 +18,11 @@ export class PostCardComponent {
   @Input() use: 'home' | 'active-post' | 'inactive-post' = 'home';
   imageLoaded = false;
 
-  constructor(private postService: PostService, private router: Router) {}
+  constructor(
+    private postService: PostService,
+    private chatService: ChatService,
+    private router: Router
+  ) {}
 
   onDelete(postId: string) {
     this.postService.deletePost(postId);
@@ -30,5 +35,14 @@ export class PostCardComponent {
   onEdit(postId: string) {
     this.router.navigate(['/posts/' + postId]);
     this.postService.setSelectedTab(0);
+  }
+
+  onChat(userId: string) {
+    console.log('onchat')
+    this.chatService.startChatWithUser(userId).subscribe((chatId) => {
+      if (chatId) {
+        this.router.navigate(['/chat'], { state: { selectedChatId: chatId } });
+      }
+    });
   }
 }

@@ -1,0 +1,33 @@
+<div class="chat-room">
+  <mat-toolbar>
+    <button mat-icon-button class="example-icon" aria-label="arrow back" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </mat-toolbar>
+  <div class="messages" #messagesContainer>
+    <div
+      *ngFor="let msg of messages$ | async"
+      class="message"
+      [ngClass]="{
+        own: msg.senderId === chatService.getUserId(),
+        other: msg.senderId !== chatService.getUserId()
+      }"
+    >
+      <span class="bubble">{{ msg.text }}</span>
+    </div>
+  </div>
+
+  <div class="input-container">
+    <mat-form-field class="full-width" appearance="outline">
+      <input
+        matInput
+        [(ngModel)]="newMessage"
+        placeholder="Escribí un mensaje..."
+        (keyup.enter)="send()"
+      />
+      <button mat-icon-button matSuffix color="primary" (click)="send()">
+        <mat-icon>send</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+</div>

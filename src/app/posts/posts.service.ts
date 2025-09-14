@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators';
+import { finalize, map, tap } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
 
 @Injectable({
@@ -41,7 +41,8 @@ export class PostService {
   getHomePosts(): Observable<any[]> {
     return this.firestore
       .collection('posts', (ref) => ref.where('isActive', '==', true))
-      .valueChanges({ idField: 'id' });
+      .valueChanges({ idField: 'id' })
+      .pipe(map((posts) => posts.filter((p: any) => p.userId !== this.userId)));
   }
 
   /**

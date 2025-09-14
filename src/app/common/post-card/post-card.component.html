@@ -6,18 +6,18 @@
       <span class="user-location">CABA</span>
     </div>
   </div>
-  
-   <!-- Placeholder con fondo gris y efecto blur -->
-   <div *ngIf="!imageLoaded" class="post-image-placeholder"></div>
 
-   <!-- Imagen real, se muestra cuando se carga completamente -->
-   <img 
-     [src]="post.imageUrl" 
-     alt="Imagen del post" 
-     class="post-image"
-     (load)="imageLoaded = true"
-     [class.loaded]="imageLoaded"
-   />
+  <!-- Placeholder con fondo gris y efecto blur -->
+  <div *ngIf="!imageLoaded" class="post-image-placeholder"></div>
+
+  <!-- Imagen real, se muestra cuando se carga completamente -->
+  <img
+    [src]="post.imageUrl"
+    alt="Imagen del post"
+    class="post-image"
+    (load)="imageLoaded = true"
+    [class.loaded]="imageLoaded"
+  />
 
   <div class="post-content">
     <div>{{ post.title }}</div>
@@ -27,7 +27,12 @@
     </div>
   </div>
   <div *ngIf="use !== 'home'" class="post-actions">
-    <button mat-raised-button color="primary" class="action-button" (click)="onEdit(post.id)">
+    <button
+      mat-raised-button
+      color="primary"
+      class="action-button"
+      (click)="onEdit(post.id)"
+    >
       Editar
     </button>
     <button
@@ -47,4 +52,13 @@
       Eliminar
     </button>
   </div>
+  <button
+    *ngIf="use === 'home'"
+    mat-raised-button
+    color="primary"
+    class="action-button send-message-button"
+    (click)="onChat(post.userId)"
+  >
+    Enviar mensaje
+  </button>
 </div>

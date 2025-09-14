@@ -6,7 +6,6 @@ import { authGuard } from './auth/auth.guard';
 import { PostsComponent } from './posts/posts.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ChatComponent } from './chat/chat.component';
-import { PostComponent } from './posts/post/post.component';
 
 export const routes: Routes = [
   { path: 'auth', component: AuthComponent },

@@ -67,6 +67,7 @@ export class AuthComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(6)]],
+      displayName: ['', [Validators.required, Validators.minLength(5)]],
     });
 
     this.forgotForm = this.fb.group({
@@ -106,7 +107,7 @@ export class AuthComponent implements OnInit {
   // Manejar registro
   onRegister() {
     if (this.registerForm.invalid) return;
-    const { email, password, confirmPassword } = this.registerForm.value;
+    const { email, password, confirmPassword, displayName } = this.registerForm.value;
     this.isLoading = true;
 
     if (password !== confirmPassword) {
@@ -115,7 +116,7 @@ export class AuthComponent implements OnInit {
     }
 
     this.authService
-      .registerWithEmail(email, password)
+      .registerWithEmail(email, password, displayName)
       .then((result) => {
         console.log('Usuario registrado:', result.user);
         this.isLoading = false;

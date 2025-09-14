@@ -1,1 +1,23 @@
-<p>chat works!</p>
+<mat-toolbar *ngIf="showToolbar()">
+  <button
+    mat-icon-button
+    class="example-icon"
+    aria-label="arrow back"
+    (click)="goBack()"
+  >
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>Chat</span>
+</mat-toolbar>
+<div class="chat-container">
+  <app-chat-list
+    *ngIf="showChatList()"
+    (chatSelected)="selectChat($event)"
+    [selectedChatId]="selectedChatId"
+  ></app-chat-list>
+  <app-chat-room
+    *ngIf="showChatRoom()"
+    [chatId]="selectedChatId"
+    (back)="clearSelection()"
+  ></app-chat-room>
+</div>

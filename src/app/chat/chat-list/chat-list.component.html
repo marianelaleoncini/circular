@@ -1,0 +1,6 @@
+<mat-nav-list>
+  <mat-list-item *ngFor="let chat of chats$ | async" (click)="selectChat(chat.id)" [ngClass]="{ selected: chat.id === selectedChatId }">
+    <div mat-line>{{ chat.displayName }}</div>
+    <div mat-line class="secondary">{{ chat.lastMessage }}</div>
+  </mat-list-item>
+</mat-nav-list>

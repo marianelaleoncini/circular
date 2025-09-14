@@ -8,7 +8,8 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
 import { environment } from '../environments/environment';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-
+import { setLogLevel } from 'firebase/app';
+//setLogLevel('debug');
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),

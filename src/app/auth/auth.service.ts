@@ -16,6 +16,7 @@ export class AuthService {
 
   setCurrentUser(user: any): void {
     this.currentUser = user;
+    console.log('Usuario actual:', this.currentUser);
   }
 
   getUser(): any {
@@ -28,17 +29,52 @@ export class AuthService {
 
   // Iniciar sesión con Google
   loginWithGoogle() {
-    return this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    return this.afAuth
+      .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+      .then(async (result) => {
+        if (result.user) {
+          this.setCurrentUser(result.user);
+          await this.syncUserWithFirestore(result.user);
+        }
+        return result;
+      });
   }
 
   // Registrar un nuevo usuario con email y contraseña
-  registerWithEmail(email: string, password: string) {
-    return this.afAuth.createUserWithEmailAndPassword(email, password);
+  registerWithEmail(email: string, password: string, displayName: string) {
+    return this.afAuth
+      .createUserWithEmailAndPassword(email, password)
+      .then(async (result) => {
+        const user = result.user;
+        if (user) {
+          await user.updateProfile({ displayName });
+
+          this.setCurrentUser(user);
+
+          const userRef = this.firestore.collection('users').doc(user.uid);
+          await userRef.set({
+            uid: user.uid,
+            displayName: displayName,
+            email: user.email,
+            photoURL: user.photoURL || '',
+            createdAt: new Date(),
+          });
+        }
+        return result;
+      });
   }
 
   // Iniciar sesión con email y contraseña
   loginWithEmail(email: string, password: string) {
-    return this.afAuth.signInWithEmailAndPassword(email, password);
+    return this.afAuth
+      .signInWithEmailAndPassword(email, password)
+      .then(async (result) => {
+        if (result.user) {
+          this.setCurrentUser(result.user);
+          await this.syncUserWithFirestore(result.user);
+        }
+        return result;
+      });
   }
 
   // Cerrar sesión
@@ -61,6 +97,23 @@ export class AuthService {
     return this.afAuth.confirmPasswordReset(oobCode, newPassword);
   }
 
+  private async syncUserWithFirestore(user: firebase.User): Promise<void> {
+    if (!user) return;
+
+    const userRef = this.firestore.collection('users').doc(user.uid);
+    const doc = await firstValueFrom(userRef.get());
+
+    if (!doc.exists) {
+      await userRef.set({
+        uid: user.uid,
+        displayName: user.displayName || '',
+        email: user.email || '',
+        photoURL: user.photoURL || '',
+        createdAt: new Date(),
+      });
+    }
+  }
+
   async saveUserProfile(
     nombre: string,
     fotoUrl: string,
@@ -74,7 +127,8 @@ export class AuthService {
     await this.firestore.collection('users').doc(this.currentUser.uid).set(
       {
         uid: this.currentUser.uid,
-        nombre,
+        displayName: nombre,
+        
         foto: fotoUrl,
         ubicacion: { direccion, ciudad, provincia },
       },
@@ -85,7 +139,7 @@ export class AuthService {
     if (!this.currentUser.displayName || !this.currentUser.photoURL) {
       await this.currentUser.updateProfile({
         displayName: nombre,
-        photoURL: fotoUrl
+        photoURL: fotoUrl,
       });
     }
   }
@@ -94,11 +148,10 @@ export class AuthService {
     const user = this.currentUser;
     if (!user) return null;
 
-    
     const userDocRef = this.firestore.collection('users').doc(user.uid);
     const docSnapshot = await firstValueFrom(userDocRef.get());
-    
-console.log(docSnapshot.exists);
+
+    console.log(docSnapshot.exists);
     if (docSnapshot.exists) {
       console.log(docSnapshot.data());
       return docSnapshot.data();
@@ -108,7 +161,7 @@ console.log(docSnapshot.exists);
         uid: user.uid,
         nombre: user.displayName || '',
         foto: user.photoURL || '',
-        ubicacion: { direccion: '', ciudad: '', provincia: '' }
+        ubicacion: { direccion: '', ciudad: '', provincia: '' },
       };
     }
   }

@@ -25,6 +25,15 @@
         >
       </mat-form-field>
 
+      <!-- Campo de Nombre -->
+      <mat-form-field *ngIf="!isLoginMode" class="full-width">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="displayName" type="text" required />
+        <mat-error *ngIf="isControlInvalid('displayName', getForm())"
+          >Por favor ingrese un nombre válido.</mat-error
+        >
+      </mat-form-field>
+
       <!-- Campo de Contraseña -->
       <mat-form-field class="full-width">
         <mat-label>Contraseña</mat-label>

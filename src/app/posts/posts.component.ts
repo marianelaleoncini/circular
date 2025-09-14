@@ -43,4 +43,8 @@ export class PostsComponent {
       this.router.navigate(['/posts'], { replaceUrl: true });
     }
   }
+
+  goBack() {
+    this.router.navigate(['/home']);
+  }
 }
