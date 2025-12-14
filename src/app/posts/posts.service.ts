@@ -22,12 +22,21 @@ export class PostService {
   selectedTab$ = this.selectedTabSubject.asObservable();
 
   // Crear una nueva publicación
-  addPost(post: any): Promise<void> {
+  async addPost(post: any): Promise<void> {
+    const user = this.authService.currentUser;
+
     const postId = this.firestore.createId();
-    return this.firestore
-      .collection('posts')
-      .doc(postId)
-      .set({ ...post, id: postId });
+
+    const newPost = {
+      ...post,
+      id: postId,
+      userId: user.uid,
+      authorName: user.displayName,
+      authorPhoto: user.photoURL,
+      isActive: true,
+    };
+
+    return this.firestore.collection('posts').doc(postId).set(newPost);
   }
 
   // Recuperar una publicación
