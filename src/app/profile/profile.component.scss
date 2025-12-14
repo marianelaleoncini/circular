@@ -1,0 +1,25 @@
+.profile {
+  margin: 1rem
+}
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-image {
+  max-width: 96px;
+  height: auto;
+  margin-top: 16px;
+}
+
+@media (min-width: 600px) {
+  /* Estilos para pantallas más grandes (tabletas y escritorios) */
+  .profile {
+    margin: 1.5rem
+  }
+
+  .profile-form {
+   width: 50%;
+  }
+}

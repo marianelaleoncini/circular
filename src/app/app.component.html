@@ -1,3 +1,5 @@
+<app-loading *ngIf="isLoading"></app-loading>
+
 <div class="circular-container">
   <app-navigation *ngIf="isAuthenticated" class="navigation"></app-navigation>
   <div [class]="isAuthenticated ? 'content' : 'content-full'">

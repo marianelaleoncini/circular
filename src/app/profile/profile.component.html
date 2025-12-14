@@ -4,38 +4,81 @@
   </button>
   <span>Perfil</span>
 </mat-toolbar>
-<form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+<div class="profile">
+  <h2>Editar Perfil</h2>
+  <form
+    [formGroup]="profileForm"
+    (ngSubmit)="saveProfile()"
+    class="profile-form"
+  >
     <mat-form-field appearance="fill">
       <mat-label>Nombre</mat-label>
-      <input matInput formControlName="nombre" required />
-      <mat-error *ngIf="profileForm.get('nombre')?.invalid">El nombre es obligatorio</mat-error>
+      <input matInput formControlName="name" required />
+      <mat-error *ngIf="profileForm.get('name')?.invalid"
+        >El nombre es obligatorio</mat-error
+      >
     </mat-form-field>
-  
-    <div class="profile-image">
-      <img [src]="user?.foto" alt="Foto de perfil">
-    </div>
-  
-    <mat-form-field appearance="fill">
-      <mat-label>Dirección</mat-label>
-      <input matInput formControlName="direccion" required />
-      <mat-error *ngIf="profileForm.get('direccion')?.invalid">La dirección es obligatoria</mat-error>
-    </mat-form-field>
-  
-    <mat-form-field appearance="fill">
-      <mat-label>Ciudad</mat-label>
-      <input matInput formControlName="ciudad" required />
-      <mat-error *ngIf="profileForm.get('ciudad')?.invalid">La ciudad es obligatoria</mat-error>
-    </mat-form-field>
-  
+
+    <img
+      class="profile-image"
+      *ngIf="imageUrl || user?.photoURL"
+      [src]="imageUrl ? imageUrl : user?.photoURL"
+      class="profile-image"
+      alt="Foto de perfil"
+    />
+
+    <!-- Botón de subida de imagen -->
+    <button
+      mat-raised-button
+      color="secondary"
+      type="button"
+      (click)="fileInput.click()"
+      [disabled]="uploadingImage"
+    >
+      <mat-icon>upload</mat-icon>
+      {{ uploadingImage ? "Subiendo..." : "Foto de perfil" }}
+    </button>
+
+    <!-- Input file oculto -->
+    <input
+      #fileInput
+      type="file"
+      hidden
+      (change)="onFileSelected($event)"
+      accept="image/*"
+    />
+
     <mat-form-field appearance="fill">
       <mat-label>Provincia</mat-label>
-      <input matInput formControlName="provincia" required />
-      <mat-error *ngIf="profileForm.get('provincia')?.invalid">La provincia es obligatoria</mat-error>
+      <mat-select formControlName="province">
+        <mat-option *ngFor="let province of provinces" [value]="province.id">
+          {{ province.name }}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
-  
-    <button mat-raised-button color="primary" [disabled]="isLoading" type="submit">
-      <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="24" color="accent"></mat-progress-spinner>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Ciudad</mat-label>
+      <mat-select formControlName="city">
+        <mat-option *ngFor="let city of cities" [value]="city.id">
+          {{ city.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="isLoading"
+      type="submit"
+    >
+      <mat-progress-spinner
+        *ngIf="isLoading"
+        mode="indeterminate"
+        diameter="24"
+        color="accent"
+      ></mat-progress-spinner>
       <span *ngIf="!isLoading">Guardar</span>
     </button>
   </form>
-  
+</div>

@@ -9,6 +9,7 @@ import { environment } from '../environments/environment';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { setLogLevel } from 'firebase/app';
+import { provideHttpClient } from '@angular/common/http';
 //setLogLevel('debug');
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,6 +20,8 @@ export const appConfig: ApplicationConfig = {
     }),
     provideFirebaseApp(() => initializeApp(environment.firebase)), // Inicializa Firebase
     provideAuth(() => getAuth()), // Proveedor de autenticación]
-    { provide: FIREBASE_OPTIONS, useValue: environment.firebase }, provideAnimationsAsync(),
+    { provide: FIREBASE_OPTIONS, useValue: environment.firebase },
+    provideAnimationsAsync(),
+    provideHttpClient(),
   ],
 };

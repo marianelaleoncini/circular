@@ -1,3 +1,4 @@
+import { UtilsService } from './../../common/services/utils.service';
 import { Component, Input, SimpleChanges } from '@angular/core';
 import {
   FormBuilder,
@@ -62,7 +63,8 @@ export class PostComponent {
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
-    private postsService: PostService
+    private postsService: PostService,
+    private utilsService: UtilsService,
   ) {
     this.postForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(50)]],
@@ -109,7 +111,7 @@ export class PostComponent {
     const file: File = event.target.files[0];
     if (file) {
       this.uploadingImage = true;
-      this.postService.uploadImage(file).subscribe((url) => {
+      this.utilsService.uploadImage(file).subscribe((url) => {
         this.imageUrl = url;
         this.uploadingImage = false;
       });

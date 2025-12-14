@@ -3,6 +3,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';
 import { firstValueFrom, map, Observable } from 'rxjs';
+import { UtilsService } from '../common/services/utils.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,8 @@ import { firstValueFrom, map, Observable } from 'rxjs';
 export class AuthService {
   constructor(
     public afAuth: AngularFireAuth,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private utilsService: UtilsService
   ) {}
   currentUser: any;
 
@@ -115,11 +117,10 @@ export class AuthService {
   }
 
   async saveUserProfile(
-    nombre: string,
-    fotoUrl: string,
-    direccion: string,
-    ciudad: string,
-    provincia: string
+    displayName: string,
+    photoURL: string,
+    city: string,
+    province: string
   ): Promise<void> {
     if (!this.currentUser) return;
 
@@ -127,10 +128,10 @@ export class AuthService {
     await this.firestore.collection('users').doc(this.currentUser.uid).set(
       {
         uid: this.currentUser.uid,
-        displayName: nombre,
-        
-        foto: fotoUrl,
-        ubicacion: { direccion, ciudad, provincia },
+        displayName,
+        photoURL,
+        city,
+        province,
       },
       { merge: true }
     );
@@ -138,8 +139,8 @@ export class AuthService {
     // Si el usuario no tiene displayName o photoURL en Auth, actualizarlo
     if (!this.currentUser.displayName || !this.currentUser.photoURL) {
       await this.currentUser.updateProfile({
-        displayName: nombre,
-        photoURL: fotoUrl,
+        displayName: displayName,
+        photoURL: photoURL,
       });
     }
   }
@@ -151,18 +152,37 @@ export class AuthService {
     const userDocRef = this.firestore.collection('users').doc(user.uid);
     const docSnapshot = await firstValueFrom(userDocRef.get());
 
-    console.log(docSnapshot.exists);
     if (docSnapshot.exists) {
-      console.log(docSnapshot.data());
       return docSnapshot.data();
     } else {
       // Si no existe en Firestore, usar datos de Firebase Auth
-      return {
+      let photoURL = '';
+
+      if (user.photoURL) {
+        try {
+          photoURL = await firstValueFrom(
+            this.utilsService.uploadImageFromUrl(
+              user.photoURL,
+              `avatar_${user.uid}.jpg`
+            )
+          );
+        } catch (e) {
+          console.error('Error subiendo imagen de Google', e);
+        }
+      }
+
+      const profile = {
         uid: user.uid,
-        nombre: user.displayName || '',
-        foto: user.photoURL || '',
-        ubicacion: { direccion: '', ciudad: '', provincia: '' },
+        displayName: user.displayName || '',
+        photoURL,
+        city: '',
+        province: '',
+        createdAt: new Date(),
       };
+
+      await userDocRef.set(profile);
+
+      return profile;
     }
   }
 }

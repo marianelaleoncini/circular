@@ -1,3 +1,4 @@
+import { UtilsService } from './../common/services/utils.service';
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
@@ -12,7 +13,6 @@ export class PostService {
   userId: any;
   constructor(
     private firestore: AngularFirestore,
-    private storage: AngularFireStorage,
     private authService: AuthService
   ) {
     this.userId = this.authService.currentUser.uid;
@@ -79,27 +79,6 @@ export class PostService {
    */
   deletePost(postId: string): Promise<void> {
     return this.firestore.collection('posts').doc(postId).delete();
-  }
-
-  // Subir imagen a Firebase Storage
-  uploadImage(file: File): Observable<string> {
-    const filePath = `images/${Date.now()}_${file.name}`;
-    const fileRef = this.storage.ref(filePath);
-    const task = this.storage.upload(filePath, file);
-
-    return new Observable((observer) => {
-      task
-        .snapshotChanges()
-        .pipe(
-          finalize(() => {
-            fileRef.getDownloadURL().subscribe((url) => {
-              observer.next(url);
-              observer.complete();
-            });
-          })
-        )
-        .subscribe();
-    });
   }
 
   toggleActive(postId: string, isActive: boolean): Promise<void> {
