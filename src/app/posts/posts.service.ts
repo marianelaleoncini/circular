@@ -20,6 +20,8 @@ export class PostService {
 
   private selectedTabSubject = new BehaviorSubject<number>(0);
   selectedTab$ = this.selectedTabSubject.asObservable();
+  private editModeSubject = new BehaviorSubject<boolean>(false);
+  editMode$ = this.editModeSubject.asObservable();
 
   // Crear una nueva publicación
   async addPost(post: any): Promise<void> {
@@ -96,5 +98,9 @@ export class PostService {
 
   setSelectedTab(index: number) {
     this.selectedTabSubject.next(index);
+  }
+
+  setEditMode(value: boolean) {
+    this.editModeSubject.next(value);
   }
 }

@@ -1,5 +1,5 @@
 <div class="post">
-  <h2>Crear nueva publicación</h2>
+  <h2>{{ postId ? "Editar publicación" : "Crear nueva publicación" }}</h2>
   <form class="post-form" [formGroup]="postForm" (ngSubmit)="onSubmit()">
     <!-- Título -->
     <mat-form-field appearance="fill">
@@ -9,7 +9,7 @@
         El campo es obligatorio
       </mat-error>
     </mat-form-field>
-  
+
     <!-- Descripción -->
     <mat-form-field appearance="fill">
       <mat-label>Descripción</mat-label>
@@ -18,7 +18,7 @@
         La campo es obligatorio
       </mat-error>
     </mat-form-field>
-  
+
     <!-- Precio -->
     <mat-form-field appearance="fill">
       <mat-label>Precio</mat-label>
@@ -30,7 +30,7 @@
         El precio debe ser mayor o igual a 0
       </mat-error>
     </mat-form-field>
-  
+
     <!-- Categoría -->
     <mat-form-field appearance="fill">
       <mat-label>Categoría</mat-label>
@@ -43,7 +43,7 @@
         Debes seleccionar una categoría
       </mat-error>
     </mat-form-field>
-  
+
     <!-- Imagen seleccionada -->
     <img
       *ngIf="imageUrl"
@@ -51,7 +51,7 @@
       class="post-image"
       alt="Imagen seleccionada"
     />
-  
+
     <!-- Botón de subida de imagen -->
     <button
       mat-raised-button
@@ -63,7 +63,7 @@
       <mat-icon>upload</mat-icon>
       {{ uploadingImage ? "Subiendo..." : "Subir imagen" }}
     </button>
-  
+
     <!-- Input file oculto -->
     <input
       #fileInput
@@ -72,7 +72,7 @@
       (change)="onFileSelected($event)"
       accept="image/*"
     />
-  
+
     <!-- Activa/Inactiva -->
     <mat-slide-toggle
       labelPosition="before"
@@ -80,7 +80,7 @@
       color="primary"
       >Activa</mat-slide-toggle
     >
-  
+
     <!-- Botón de guardar -->
     <button
       mat-raised-button
@@ -98,5 +98,4 @@
       <span *ngIf="!isLoading">Guardar</span>
     </button>
   </form>
-  
 </div>

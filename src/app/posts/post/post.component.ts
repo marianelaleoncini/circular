@@ -54,6 +54,7 @@ export class PostComponent {
   isLoading = false;
   uploadingImage = false;
   postId: string = '';
+  editMode: boolean = false;
   @Input() shouldResetForm = false;
 
   constructor(
@@ -64,7 +65,7 @@ export class PostComponent {
     private router: Router,
     private route: ActivatedRoute,
     private postsService: PostService,
-    private utilsService: UtilsService,
+    private utilsService: UtilsService
   ) {
     this.postForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(50)]],
@@ -79,10 +80,17 @@ export class PostComponent {
 
       if (this.postId) {
         this.loadPostData();
+        this.postService.setEditMode(true);
       }
     });
   }
-  
+
+  ngOnInit() {
+    this.postService.editMode$.subscribe((value) => {
+      this.editMode = value;
+    });
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes['shouldResetForm']) {
       this.updateData();
@@ -119,23 +127,29 @@ export class PostComponent {
   }
 
   onSubmit(): void {
-    if (this.postForm.valid && this.imageUrl) {
-      const userId = this.authService.currentUser.uid; // Obtén el ID del usuario autenticado
-      const post = {
-        ...this.postForm.value,
-        imageUrl: this.imageUrl,
-        userId,
-      };
-      this.isLoading = true;
-      this.postService.addPost(post).then(() => {
-        this.isLoading = false;
-        this.snackBar.open('Publicación guardada con éxito', 'Cerrar', {
-          duration: 4000,
-        });
-        this.router.navigate(['/home']); // Redirigir a la página principal
-      });
+    if (!this.postForm.valid) return;
+
+    this.isLoading = true;
+
+    const postData = {
+      ...this.postForm.value,
+      imageUrl: this.imageUrl,
+    };
+
+    if (this.postId) {
+      this.postService
+        .updatePost(this.postId, postData)
+        .then(() => this.onSuccess('Publicación actualizada con éxito'));
     } else {
-      this.isLoading = false;
+      this.postService
+        .addPost(postData)
+        .then(() => this.onSuccess('Publicación creada con éxito'));
     }
+  }
+
+  private onSuccess(message: string): void {
+    this.isLoading = false;
+    this.snackBar.open(message, 'Cerrar', { duration: 4000 });
+    this.router.navigate(['/home']);
   }
 }

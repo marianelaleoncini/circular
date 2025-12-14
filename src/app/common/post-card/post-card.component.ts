@@ -34,11 +34,11 @@ export class PostCardComponent {
 
   onEdit(postId: string) {
     this.router.navigate(['/posts/' + postId]);
+    this.postService.setEditMode(true);
     this.postService.setSelectedTab(0);
   }
 
   onChat(userId: string) {
-    console.log('onchat')
     this.chatService.startChatWithUser(userId).subscribe((chatId) => {
       if (chatId) {
         this.router.navigate(['/chat'], { state: { selectedChatId: chatId } });

@@ -25,6 +25,7 @@ import { Router } from '@angular/router';
 export class PostsComponent {
   selectedTab = 0;
   shouldResetForm = false;
+  editMode: boolean = false;
 
   constructor(private postService: PostService, private router: Router) {}
 
@@ -32,6 +33,10 @@ export class PostsComponent {
     // Escuchar cambios en el servicio
     this.postService.selectedTab$.subscribe((index) => {
       this.selectedTab = index;
+    });
+
+    this.postService.editMode$.subscribe((value) => {
+      this.editMode = value;
     });
   }
 

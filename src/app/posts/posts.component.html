@@ -5,7 +5,7 @@
   <span>Mis publicaciones</span>
 </mat-toolbar>
 <mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="onTabChange()">
-  <mat-tab label="Nueva">
+  <mat-tab [label]="editMode ? 'Editar publicación' : 'Nueva publicación'">
     <app-post [shouldResetForm]="shouldResetForm"></app-post>
   </mat-tab>
   <mat-tab label="Publicadas">
