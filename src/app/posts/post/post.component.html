@@ -1,101 +1,72 @@
-<div class="post">
-  <h2>{{ postId ? "Editar publicación" : "Crear nueva publicación" }}</h2>
-  <form class="post-form" [formGroup]="postForm" (ngSubmit)="onSubmit()">
-    <!-- Título -->
-    <mat-form-field appearance="fill">
-      <mat-label>Título</mat-label>
-      <input matInput formControlName="title" required />
-      <mat-error *ngIf="postForm.get('title')?.hasError('required')">
-        El campo es obligatorio
-      </mat-error>
-    </mat-form-field>
+<div class="post-container">
+  <div class="header">
+    <h2>{{ postId ? "Editar publicación" : "Crear nueva publicación" }}</h2>
+  </div>
 
-    <!-- Descripción -->
-    <mat-form-field appearance="fill">
-      <mat-label>Descripción</mat-label>
-      <textarea matInput formControlName="description" required></textarea>
-      <mat-error *ngIf="postForm.get('description')?.hasError('required')">
-        La campo es obligatorio
-      </mat-error>
-    </mat-form-field>
+  <form [formGroup]="postForm" (ngSubmit)="onSubmit()" class="post-layout">
+    
+    <div class="image-section">
+      <div class="image-upload-area" (click)="fileInput.click()" [class.has-image]="imageUrl">
+        <div *ngIf="!imageUrl" class="placeholder-content">
+          <mat-icon class="upload-icon">add_photo_alternate</mat-icon>
+          <span>Subir foto</span>
+        </div>
+        
+        <img *ngIf="imageUrl" [src]="imageUrl" class="preview-image" alt="Vista previa">
+        
+        <div *ngIf="uploadingImage" class="loading-overlay">
+          <mat-spinner diameter="40" color="accent"></mat-spinner>
+        </div>
 
-    <!-- Precio -->
-    <mat-form-field appearance="fill">
-      <mat-label>Precio</mat-label>
-      <input matInput type="number" formControlName="price" required min="0" />
-      <mat-error *ngIf="postForm.get('price')?.hasError('required')">
-        El campo es obligatorio
-      </mat-error>
-      <mat-error *ngIf="postForm.get('price')?.hasError('min')">
-        El precio debe ser mayor o igual a 0
-      </mat-error>
-    </mat-form-field>
+        <button *ngIf="imageUrl && !uploadingImage" type="button" mat-mini-fab color="primary" class="edit-badge">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+      
+      <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept="image/*" />
+    </div>
 
-    <!-- Categoría -->
-    <mat-form-field appearance="fill">
-      <mat-label>Categoría</mat-label>
-      <mat-select formControlName="category" required>
-        <mat-option *ngFor="let category of categories" [value]="category">
-          {{ category }}
-        </mat-option>
-      </mat-select>
-      <mat-error *ngIf="postForm.get('category')?.hasError('required')">
-        Debes seleccionar una categoría
-      </mat-error>
-    </mat-form-field>
+    <div class="form-section">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Título de la publicación</mat-label>
+        <input matInput formControlName="title" required />
+        <mat-error *ngIf="postForm.get('title')?.hasError('required')">Requerido</mat-error>
+      </mat-form-field>
 
-    <!-- Imagen seleccionada -->
-    <img
-      *ngIf="imageUrl"
-      [src]="imageUrl"
-      class="post-image"
-      alt="Imagen seleccionada"
-    />
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="half-width price-field">
+          <mat-label>Precio</mat-label>
+          <input matInput type="number" formControlName="price" required min="0" class="align-right"/>
+          <mat-error *ngIf="postForm.get('price')?.hasError('required')">Requerido</mat-error>
+        </mat-form-field>
 
-    <!-- Botón de subida de imagen -->
-    <button
-      mat-raised-button
-      color="secondary"
-      type="button"
-      (click)="fileInput.click()"
-      [disabled]="uploadingImage"
-    >
-      <mat-icon>upload</mat-icon>
-      {{ uploadingImage ? "Subiendo..." : "Subir imagen" }}
-    </button>
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>Categoría</mat-label>
+          <mat-select formControlName="category" required>
+            <mat-option *ngFor="let category of categories" [value]="category">
+              {{ category }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="postForm.get('category')?.hasError('required')">Requerido</mat-error>
+        </mat-form-field>
+      </div>
 
-    <!-- Input file oculto -->
-    <input
-      #fileInput
-      type="file"
-      hidden
-      (change)="onFileSelected($event)"
-      accept="image/*"
-    />
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Descripción detallada</mat-label>
+        <textarea matInput formControlName="description" required rows="5"></textarea>
+        <mat-error *ngIf="postForm.get('description')?.hasError('required')">Requerido</mat-error>
+      </mat-form-field>
 
-    <!-- Activa/Inactiva -->
-    <mat-slide-toggle
-      labelPosition="before"
-      formControlName="isActive"
-      color="primary"
-      >Activa</mat-slide-toggle
-    >
+      <div class="actions-row">
+        <mat-slide-toggle formControlName="isActive" color="primary">
+          Publicación activa
+        </mat-slide-toggle>
 
-    <!-- Botón de guardar -->
-    <button
-      mat-raised-button
-      color="primary"
-      [disabled]="isLoading"
-      type="submit"
-    >
-      <mat-progress-spinner
-        *ngIf="isLoading"
-        mode="indeterminate"
-        diameter="24"
-        color="accent"
-      >
-      </mat-progress-spinner>
-      <span *ngIf="!isLoading">Guardar</span>
-    </button>
+        <button mat-raised-button color="primary" [disabled]="isLoading" type="submit" class="save-btn">
+          <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="24" color="accent"></mat-progress-spinner>
+          <span *ngIf="!isLoading">Guardar publicación</span>
+        </button>
+      </div>
+    </div>
   </form>
 </div>

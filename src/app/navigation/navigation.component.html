@@ -1,55 +1,51 @@
 <nav class="bottom-navigation">
-    <h1 class="brand">Circular</h1>
-    <button
-      mat-button
-      class="navigation-tab"
-      routerLink="/home"
-      routerLinkActive="active"
-      aria-label="Inicio"
-    >
-      <mat-icon>home</mat-icon>
-      <span>Inicio</span>
-    </button>
-    <button
-      mat-button
-      class="navigation-tab"
-      routerLink="/posts"
-      routerLinkActive="active"
-      aria-label="Publicaciones"
-    >
-      <mat-icon>description</mat-icon>
-      <span>Publicaciones</span>
-    </button>
-    <button
-      mat-button
-      class="navigation-tab"
-      routerLink="/chat"
-      routerLinkActive="active"
-      aria-label="Chat"
-    >
-      <mat-icon>chat</mat-icon>
-      <span>Chat</span>
-    </button>
-    <button
-      mat-button
-      class="navigation-tab"
-      routerLink="/profile"
-      routerLinkActive="active"
-      aria-label="Perfil"
-    >
-      <mat-icon>person</mat-icon>
-      <span>Perfil</span>
-    </button>
-    <mat-divider></mat-divider>
-    <!-- mover al perfil pq rompe en mobile -->
-    <button
-      mat-button
-      class="navigation-tab logout-button"
-      aria-label="Cerrar sesión"
-      (click)="logout()"
-    >
-      <mat-icon>logout</mat-icon>
-      <span>Cerrar sesión</span>
-    </button>
-  </nav>
-  
+  <div class="brand">
+    <img
+      class="brand-img"
+      src="assets/images/logo.png"
+      alt="logo de la empresa"
+      height="30"
+    />
+    <h1>Circular</h1>
+  </div>
+  <button
+    mat-button
+    class="navigation-tab"
+    routerLink="/home"
+    routerLinkActive="active"
+    aria-label="Inicio"
+  >
+    <mat-icon>home</mat-icon>
+    <span>Inicio</span>
+  </button>
+  <button
+    mat-button
+    class="navigation-tab"
+    routerLink="/posts"
+    routerLinkActive="active"
+    aria-label="Publicaciones"
+  >
+    <mat-icon>description</mat-icon>
+    <span>Publicaciones</span>
+  </button>
+  <button
+    mat-button
+    class="navigation-tab"
+    routerLink="/chat"
+    routerLinkActive="active"
+    aria-label="Chat"
+  >
+    <mat-icon>chat</mat-icon>
+    <span>Chat</span>
+  </button>
+  <button
+    mat-button
+    class="navigation-tab"
+    routerLink="/profile"
+    routerLinkActive="active"
+    aria-label="Perfil"
+  >
+    <mat-icon>person</mat-icon>
+    <span>Perfil</span>
+  </button>
+</nav>

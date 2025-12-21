@@ -1,0 +1,21 @@
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 14px 0;
+
+  .brand-img {
+    margin-right: 8px;
+  }
+
+  .brand-title {
+    font-size: 24px;
+    margin: 0;
+  }
+}
+@media (min-width: 600px) {
+  /* Estilos para pantallas más grandes (tabletas y escritorios) */
+  .brand {
+    display: none;
+  }
+}

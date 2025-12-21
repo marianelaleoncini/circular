@@ -142,4 +142,13 @@ export class ProfileComponent implements OnInit {
       });
     }
   }
+
+  goBack() {
+    this.router.navigate(['/home']);
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/auth']);
+  }
 }

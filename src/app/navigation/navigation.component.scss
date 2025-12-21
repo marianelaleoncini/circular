@@ -12,7 +12,6 @@
 
 .brand {
   display: none;
-  padding: 8px;
 }
 
 .navigation-tab {
@@ -41,10 +40,6 @@
   font-weight: bold;
 }
 
-.logout-button {
-  white-space: nowrap;
-}
-
 mat-divider {
   width: 100%;
   margin: 8px 0;
@@ -70,6 +65,12 @@ mat-divider {
   }
 
   .brand {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .brand-img {
+      margin-right: 8px;
+    }
   }
 }

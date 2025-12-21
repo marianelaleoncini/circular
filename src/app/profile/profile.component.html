@@ -1,52 +1,52 @@
 <mat-toolbar>
-  <button mat-icon-button class="example-icon" aria-label="arrow back">
+  <button mat-icon-button class="example-icon" aria-label="arrow back" (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <span>Perfil</span>
 </mat-toolbar>
+
 <div class="profile">
-  <h2>Editar Perfil</h2>
-  <form
-    [formGroup]="profileForm"
-    (ngSubmit)="saveProfile()"
-    class="profile-form"
-  >
+  <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
+    
+    <div class="profile-header">
+      <h2>Editar Perfil</h2>
+      <button mat-button class="logout-button" aria-label="Cerrar sesión" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+
+    <div class="avatar-wrapper">
+      <div class="avatar-container" (click)="fileInput.click()">
+        <img 
+          [src]="(imageUrl || user?.photoURL) ? (imageUrl || user?.photoURL) : 'assets/images/user-placeholder.png'" 
+          class="profile-image" 
+          alt="Foto de perfil"
+        />
+        
+        <div class="loading-overlay" *ngIf="uploadingImage">
+          <mat-spinner diameter="40" color="accent"></mat-spinner>
+        </div>
+
+        <button 
+          mat-mini-fab 
+          color="primary" 
+          class="edit-btn" 
+          type="button"
+          [disabled]="uploadingImage">
+          <mat-icon>edit</mat-icon> 
+        </button>
+      </div>
+
+      <p class="change-photo-text">Cambiar foto</p>
+    </div>
+
+    <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept="image/*" />
+
     <mat-form-field appearance="fill">
       <mat-label>Nombre</mat-label>
       <input matInput formControlName="name" required />
-      <mat-error *ngIf="profileForm.get('name')?.invalid"
-        >El nombre es obligatorio</mat-error
-      >
+      <mat-error *ngIf="profileForm.get('name')?.invalid">El nombre es obligatorio</mat-error>
     </mat-form-field>
-
-    <img
-      class="profile-image"
-      *ngIf="imageUrl || user?.photoURL"
-      [src]="imageUrl ? imageUrl : user?.photoURL"
-      class="profile-image"
-      alt="Foto de perfil"
-    />
-
-    <!-- Botón de subida de imagen -->
-    <button
-      mat-raised-button
-      color="secondary"
-      type="button"
-      (click)="fileInput.click()"
-      [disabled]="uploadingImage"
-    >
-      <mat-icon>upload</mat-icon>
-      {{ uploadingImage ? "Subiendo..." : "Foto de perfil" }}
-    </button>
-
-    <!-- Input file oculto -->
-    <input
-      #fileInput
-      type="file"
-      hidden
-      (change)="onFileSelected($event)"
-      accept="image/*"
-    />
 
     <mat-form-field appearance="fill">
       <mat-label>Provincia</mat-label>
@@ -66,18 +66,8 @@
       </mat-select>
     </mat-form-field>
 
-    <button
-      mat-raised-button
-      color="primary"
-      [disabled]="isLoading"
-      type="submit"
-    >
-      <mat-progress-spinner
-        *ngIf="isLoading"
-        mode="indeterminate"
-        diameter="24"
-        color="accent"
-      ></mat-progress-spinner>
+    <button mat-raised-button color="primary" [disabled]="isLoading" type="submit" class="save-btn">
+      <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="24" color="accent"></mat-progress-spinner>
       <span *ngIf="!isLoading">Guardar</span>
     </button>
   </form>
