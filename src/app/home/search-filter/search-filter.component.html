@@ -1,0 +1,58 @@
+<div class="search-container">
+  <form [formGroup]="filterForm">
+    
+    <div class="main-search-bar">
+      <mat-form-field appearance="fill" class="search-input">
+        <mat-icon matPrefix>search</mat-icon>
+        <mat-label>Buscar publicaciones...</mat-label>
+        <input matInput formControlName="search" autocomplete="off">
+        <button *ngIf="filterForm.get('search')?.value" matSuffix mat-icon-button aria-label="Clear" (click)="filterForm.get('search')?.setValue('')">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <button mat-stroked-button type="button" class="filter-toggle" (click)="panel.toggle()">
+        <mat-icon>tune</mat-icon>
+        <span class="desktop-only">Filtros</span>
+      </button>
+    </div>
+
+    <mat-expansion-panel #panel class="filters-panel mat-elevation-z0">
+      <div class="filters-grid">
+        
+        <mat-form-field appearance="fill">
+          <mat-label>Provincia</mat-label>
+          <mat-select formControlName="province">
+            <mat-option [value]="null">Todas</mat-option>
+            <mat-option *ngFor="let p of provinces" [value]="p.name">{{ p.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Ciudad</mat-label>
+          <mat-select formControlName="city" [disabled]="!filterForm.get('province')?.value || isLoadingCities">
+            <mat-option [value]="null">Todas</mat-option>
+            <mat-option *ngFor="let c of cities" [value]="c.name">{{ c.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="price-group">
+          <mat-form-field appearance="fill">
+            <mat-label>Mín $</mat-label>
+            <input matInput type="number" formControlName="minPrice" min="0">
+          </mat-form-field>
+          <span class="dash">-</span>
+          <mat-form-field appearance="fill">
+            <mat-label>Máx $</mat-label>
+            <input matInput type="number" formControlName="maxPrice" min="0">
+          </mat-form-field>
+        </div>
+
+        <div class="actions">
+            <button mat-button color="warn" (click)="clearFilters()">Limpiar</button>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+  </form>
+</div>

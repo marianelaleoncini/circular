@@ -3,3 +3,8 @@
   [post]="post"
   [use]="use"
 ></app-post-card>
+
+<div class="empty-state" *ngIf="postList.length === 0">
+  <mat-icon>search_off</mat-icon>
+  <p>No hay publicaciones.</p>
+</div>

@@ -104,16 +104,64 @@ export class AuthService {
 
     const userRef = this.firestore.collection('users').doc(user.uid);
     const doc = await firstValueFrom(userRef.get());
+    let userData: any = doc.data();
 
+    // 1. SI NO EXISTE: Lo creamos
     if (!doc.exists) {
-      await userRef.set({
+      let finalPhotoURL = user.photoURL || '';
+
+      // Si es una foto de Google, la subimos a nuestro storage antes de guardar
+      if (this.isGoogleUrl(finalPhotoURL)) {
+        try {
+          finalPhotoURL = await firstValueFrom(
+            this.utilsService.uploadImageFromUrl(
+              finalPhotoURL,
+              `avatars/${user.uid}.jpg`
+            )
+          );
+        } catch (error) {
+          console.error('Error migrando foto de Google al crear:', error);
+        }
+      }
+
+      userData = {
         uid: user.uid,
         displayName: user.displayName || '',
         email: user.email || '',
-        photoURL: user.photoURL || '',
+        photoURL: finalPhotoURL,
         createdAt: new Date(),
-      });
+        city: '',
+        province: '',
+      };
+
+      await userRef.set(userData);
     }
+
+    // 2. SI YA EXISTE: Verificamos si tiene una URL "vieja" de Google
+    else {
+      if (userData?.photoURL && this.isGoogleUrl(userData.photoURL)) {
+        console.log(
+          'Detectada imagen de Google antigua. Migrando a Storage...'
+        );
+        try {
+          const newPhotoURL = await firstValueFrom(
+            this.utilsService.uploadImageFromUrl(
+              userData.photoURL,
+              `avatars/${user.uid}.jpg`
+            )
+          );
+
+          await userRef.update({ photoURL: newPhotoURL });
+          await user.updateProfile({ photoURL: newPhotoURL });
+        } catch (error) {
+          console.error('No se pudo migrar la imagen antigua:', error);
+        }
+      }
+    }
+  }
+
+  private isGoogleUrl(url: string): boolean {
+    return url.includes('googleusercontent.com');
   }
 
   async saveUserProfile(
@@ -123,21 +171,23 @@ export class AuthService {
     province: string
   ): Promise<void> {
     if (!this.currentUser) return;
+    const safeData = {
+      uid: this.currentUser.uid,
+      displayName: displayName || '',
+      photoURL: photoURL || '',
+      city: city || null,
+      province: province || null,
+    };
 
-    // Guardar datos del usuario con merge para no sobrescribir
-    await this.firestore.collection('users').doc(this.currentUser.uid).set(
-      {
-        uid: this.currentUser.uid,
-        displayName,
-        photoURL,
-        city,
-        province,
-      },
-      { merge: true }
-    );
+    await this.firestore
+      .collection('users')
+      .doc(this.currentUser.uid)
+      .set(safeData, { merge: true });
 
-    // Si el usuario no tiene displayName o photoURL en Auth, actualizarlo
-    if (!this.currentUser.displayName || !this.currentUser.photoURL) {
+    if (
+      this.currentUser.displayName !== displayName ||
+      this.currentUser.photoURL !== photoURL
+    ) {
       await this.currentUser.updateProfile({
         displayName: displayName,
         photoURL: photoURL,

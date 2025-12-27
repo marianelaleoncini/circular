@@ -70,33 +70,36 @@ export class ProfileComponent implements OnInit {
     this.locationService.getProvinces().subscribe((provinces) => {
       this.provinces = provinces;
     });
+
     this.authService.getUserProfile().then((profile) => {
       if (profile) {
         this.user = profile;
         this.imageUrl = this.user.photoURL;
-        this.profileForm.patchValue({
-          name: this.user.displayName,
-          photoURL: this.user.photoURL,
-          city: this.user.city || '',
-          province: this.user.province || '',
-        });
+
+        this.profileForm.patchValue(
+          {
+            name: this.user.displayName,
+            photoURL: this.user.photoURL,
+            province: this.user.province || '',
+            city: this.user.city || '',
+          },
+          { emitEvent: false }
+        );
 
         if (this.user.province) {
           this.loadCities(this.user.province, this.user.city);
+          this.profileForm.get('city')?.enable({ emitEvent: false });
         }
-        console.log(this.user);
       }
     });
 
     this.profileForm.get('province')?.valueChanges.subscribe((provinceId) => {
-      const cityControl = this.profileForm.get('city');
-
       if (provinceId) {
-        cityControl?.enable();
+        this.profileForm.get('city')?.enable();
         this.loadCities(provinceId);
         this.profileForm.patchValue({ city: '' });
       } else {
-        cityControl?.disable();
+        this.profileForm.get('city')?.disable();
         this.cities = [];
         this.profileForm.patchValue({ city: '' });
       }
@@ -108,10 +111,12 @@ export class ProfileComponent implements OnInit {
   }
 
   loadCities(provinceId: string, selectedCityId?: string) {
-    console.log('Loading cities for province:', provinceId);
     this.locationService.getCities(provinceId).subscribe((cities) => {
       this.cities = cities;
-      if (selectedCityId && cities.some((c: any) => c.id === selectedCityId)) {
+      if (
+        selectedCityId &&
+        cities.some((city: any) => city.name === selectedCityId)
+      ) {
         this.profileForm.patchValue({ city: selectedCityId });
       }
     });
@@ -121,15 +126,16 @@ export class ProfileComponent implements OnInit {
     if (this.profileForm.invalid) return;
     this.isLoading = true;
 
-    const { name, city, province } = this.profileForm.value;
+    const { name, city, province } = this.profileForm.getRawValue();
+
     const photoURL = this.imageUrl;
-    console.log(photoURL);
+
     await this.authService.saveUserProfile(name, photoURL, city, province);
     this.snackBar.open('Perfil guardado con éxito', 'Cerrar', {
       duration: 4000,
     });
     this.isLoading = false;
-    this.router.navigate(['/home']); // Redirigir a la página principal
+    this.router.navigate(['/home']);
   }
 
   onFileSelected(event: any): void {

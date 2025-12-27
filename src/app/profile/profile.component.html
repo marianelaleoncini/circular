@@ -51,7 +51,7 @@
     <mat-form-field appearance="fill">
       <mat-label>Provincia</mat-label>
       <mat-select formControlName="province">
-        <mat-option *ngFor="let province of provinces" [value]="province.id">
+        <mat-option *ngFor="let province of provinces" [value]="province.name">
           {{ province.name }}
         </mat-option>
       </mat-select>
@@ -60,7 +60,7 @@
     <mat-form-field appearance="fill">
       <mat-label>Ciudad</mat-label>
       <mat-select formControlName="city">
-        <mat-option *ngFor="let city of cities" [value]="city.id">
+        <mat-option *ngFor="let city of cities" [value]="city.name">
           {{ city.name }}
         </mat-option>
       </mat-select>

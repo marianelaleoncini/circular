@@ -1,22 +1,31 @@
 <div class="post-card">
   <div class="post-header">
-    <img [src]="post.authorPhoto" alt="Foto de perfil" class="profile-img" />
+    <img
+      [src]="post.authorPhoto || 'assets/images/user-placeholder.png'"
+      alt="Foto de perfil"
+      class="profile-img"
+    />
     <div class="user-info">
       <span class="user-name">{{ post.authorName }}</span>
+      <span class="user-location">{{
+        post.authorProvince
+          ? post.authorProvince + ", " + post.authorCity
+          : "Ubicación no disponible"
+      }}</span>
     </div>
   </div>
 
-  <!-- Placeholder con fondo gris y efecto blur -->
-  <div *ngIf="!imageLoaded" class="post-image-placeholder"></div>
+  <div class="image-container">
+    <div class="post-image-placeholder" *ngIf="!imageLoaded"></div>
 
-  <!-- Imagen real, se muestra cuando se carga completamente -->
-  <img
-    [src]="post.imageUrl"
-    alt="Imagen del post"
-    class="post-image"
-    (load)="imageLoaded = true"
-    [class.loaded]="imageLoaded"
-  />
+    <img
+      [src]="post.imageUrl"
+      alt="Imagen del post"
+      class="post-image"
+      (load)="imageLoaded = true"
+      [class.loaded]="imageLoaded"
+    />
+  </div>
 
   <div class="post-content">
     <div>{{ post.title }}</div>
@@ -25,7 +34,10 @@
       <strong> {{ post.price | currency }}</strong>
     </div>
   </div>
-  <div *ngIf="use !== 'home'" class="post-actions">
+  <div
+    *ngIf="use == 'active-post' || use == 'inactive-post'"
+    class="post-actions"
+  >
     <button
       mat-raised-button
       color="primary"
@@ -52,7 +64,7 @@
     </button>
   </div>
   <button
-    *ngIf="use === 'home'"
+    *ngIf="use === 'home' || use === 'search-results'"
     mat-raised-button
     color="primary"
     class="action-button send-message-button"

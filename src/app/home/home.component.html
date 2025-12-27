@@ -1,11 +1,29 @@
 <div class="brand">
-  <img
-    class="brand-img"
-    src="assets/images/logo.png"
-    alt="logo de la empresa"
-    height="30"
-  />
+  <img class="brand-img" src="assets/images/logo.png" alt="logo" height="30" />
   <h1 class="brand-title">Circular</h1>
 </div>
+<div class="home-wrapper">
+  <app-search-filter
+    [provinces]="(provinces$ | async) || []"
+    (filterChange)="onFilterChange($event)"
+  >
+  </app-search-filter>
 
-<app-posts-list use="home"></app-posts-list>
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div class="results-container" *ngIf="!isLoading">
+    <p class="count-text" *ngIf="filteredPosts.length !== allPosts.length">
+      Encontramos {{ filteredPosts.length }} resultados
+    </p>
+
+    <app-posts-list use="search-results" [externalPosts]="filteredPosts">
+    </app-posts-list>
+
+    <div class="empty-state" *ngIf="filteredPosts.length === 0">
+      <mat-icon>search_off</mat-icon>
+      <p>No hay publicaciones que coincidan con tu búsqueda.</p>
+    </div>
+  </div>
+</div>

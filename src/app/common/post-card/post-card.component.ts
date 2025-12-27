@@ -15,7 +15,8 @@ import { Router } from '@angular/router';
 })
 export class PostCardComponent {
   @Input() post: any;
-  @Input() use: 'home' | 'active-post' | 'inactive-post' = 'home';
+  @Input() use: 'home' | 'active-post' | 'inactive-post' | 'search-results' = 'home';
+
   imageLoaded = false;
 
   constructor(

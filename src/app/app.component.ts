@@ -18,8 +18,8 @@ export class AppComponent {
 
   constructor(private authService: AuthService) {
     this.authService.getCurrentUser().subscribe(user => {
-      this.isAuthenticated = !!user; // true si hay usuario, false si no
       this.isLoading = false;
+      this.isAuthenticated = !!user; // true si hay usuario, false si no
     });
   }
 }

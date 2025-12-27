@@ -1,51 +1,36 @@
-<nav class="bottom-navigation">
+<nav class="navigation-container">
   <div class="brand">
-    <img
-      class="brand-img"
-      src="assets/images/logo.png"
-      alt="logo de la empresa"
-      height="30"
-    />
+    <img class="brand-img" src="assets/images/logo.png" alt="Circular Logo" />
     <h1>Circular</h1>
   </div>
-  <button
-    mat-button
-    class="navigation-tab"
-    routerLink="/home"
-    routerLinkActive="active"
-    aria-label="Inicio"
-  >
-    <mat-icon>home</mat-icon>
-    <span>Inicio</span>
-  </button>
-  <button
-    mat-button
-    class="navigation-tab"
-    routerLink="/posts"
-    routerLinkActive="active"
-    aria-label="Publicaciones"
-  >
-    <mat-icon>description</mat-icon>
-    <span>Publicaciones</span>
-  </button>
-  <button
-    mat-button
-    class="navigation-tab"
-    routerLink="/chat"
-    routerLinkActive="active"
-    aria-label="Chat"
-  >
-    <mat-icon>chat</mat-icon>
-    <span>Chat</span>
-  </button>
-  <button
-    mat-button
-    class="navigation-tab"
-    routerLink="/profile"
-    routerLinkActive="active"
-    aria-label="Perfil"
-  >
-    <mat-icon>person</mat-icon>
-    <span>Perfil</span>
-  </button>
+
+  <div class="menu-items">
+    <a mat-button class="nav-item" routerLink="/home" routerLinkActive="active">
+      <div class="content-wrapper">
+        <mat-icon>home</mat-icon>
+        <span class="label">Inicio</span>
+      </div>
+    </a>
+
+    <a mat-button class="nav-item" routerLink="/posts" routerLinkActive="active">
+      <div class="content-wrapper">
+        <mat-icon>description</mat-icon>
+        <span class="label">Publicaciones</span>
+      </div>
+    </a>
+
+    <a mat-button class="nav-item" routerLink="/chat" routerLinkActive="active">
+      <div class="content-wrapper">
+        <mat-icon>chat</mat-icon>
+        <span class="label">Chat</span>
+      </div>
+    </a>
+
+    <a mat-button class="nav-item" routerLink="/profile" routerLinkActive="active">
+      <div class="content-wrapper">
+        <mat-icon>person</mat-icon>
+        <span class="label">Perfil</span>
+      </div>
+    </a>
+  </div>
 </nav>
