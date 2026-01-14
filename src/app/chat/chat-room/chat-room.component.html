@@ -1,33 +1,78 @@
 <div class="chat-room">
-  <mat-toolbar>
-    <button mat-icon-button class="example-icon" aria-label="arrow back" (click)="goBack()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-  </mat-toolbar>
-  <div class="messages" #messagesContainer>
-    <div
-      *ngFor="let msg of messages$ | async"
-      class="message"
-      [ngClass]="{
-        own: msg.senderId === chatService.getUserId(),
-        other: msg.senderId !== chatService.getUserId()
-      }"
-    >
-      <span class="bubble">{{ msg.text }}</span>
-    </div>
-  </div>
+  
+  <ng-container *ngIf="chatId; else emptyState">
+    
+    <mat-toolbar class="mobile-header">
+      <button mat-icon-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
 
-  <div class="input-container">
-    <mat-form-field class="full-width" appearance="outline">
+      <div class="header-user-info" *ngIf="otherUser">
+        <img
+          [src]="otherUser.photoURL || 'assets/images/user-placeholder.png'"
+          class="header-avatar"
+          referrerpolicy="no-referrer"
+          (error)="otherUser.photoURL = 'assets/images/user-placeholder.png'"
+        />
+        <span class="header-name">{{ otherUser.displayName }}</span>
+      </div>
+    </mat-toolbar>
+
+    <div class="messages" #messagesContainer>
+      <ng-container
+        *ngFor="let msg of messages$ | async; let i = index"
+      >
+        <div
+          class="new-messages-divider"
+          *ngIf="shouldShowNewMessageDivider(i, (messages$ | async)!)"
+        >
+          <span>Mensajes Nuevos</span>
+        </div>
+
+        <div
+          class="message"
+          [ngClass]="{
+            own: msg.senderId === chatService.getUserId(),
+            other: msg.senderId !== chatService.getUserId()
+          }"
+        >
+          <div class="bubble-container">
+            <span class="bubble">{{ msg.text }}</span>
+            <span class="msg-time">
+              {{ msg.timestamp?.toDate() | date : "HH:mm" }}
+            </span>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="input-container">
       <input
-        matInput
+        type="text"
+        class="chat-input"
         [(ngModel)]="newMessage"
         placeholder="Escribí un mensaje..."
         (keyup.enter)="send()"
       />
-      <button mat-icon-button matSuffix color="primary" (click)="send()">
+      <button
+        mat-icon-button
+        color="primary"
+        (click)="send()"
+        [disabled]="!newMessage.trim()"
+      >
         <mat-icon>send</mat-icon>
       </button>
-    </mat-form-field>
-  </div>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <div class="empty-state-container">
+      <div class="empty-content">
+        <mat-icon class="empty-icon">forum</mat-icon> 
+        <h2>Circular Chat</h2>
+        <p>Seleccioná una conversación para comenzar a chatear.</p>
+      </div>
+    </div>
+  </ng-template>
+
 </div>

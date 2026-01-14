@@ -1,6 +1,39 @@
 <mat-nav-list>
-  <mat-list-item *ngFor="let chat of chats$ | async" (click)="selectChat(chat.id)" [ngClass]="{ selected: chat.id === selectedChatId }">
-    <div mat-line>{{ chat.displayName }}</div>
-    <div mat-line class="secondary">{{ chat.lastMessage }}</div>
-  </mat-list-item>
+  <ng-container *ngFor="let chat of chats$ | async; trackBy: trackByChatId">
+    <mat-list-item
+      (click)="selectChat(chat.id)"
+      [class.selected]="chat.id === selectedChatId"
+    >
+      <div class="chat-item-layout">
+        <div class="avatar-wrapper">
+          <img
+            [src]="chat.photoURL || 'assets/images/user-placeholder.png'"
+            class="chat-avatar"
+            referrerpolicy="no-referrer"
+            loading="lazy"
+          />
+        </div>
+
+        <div class="text-wrapper">
+          <div class="header-row">
+            <span class="chat-name">{{ chat.displayName }}</span>
+            <span class="chat-time" *ngIf="chat.timestamp">
+              {{ chat.timestamp?.toDate() | date : "HH:mm" }}
+            </span>
+          </div>
+
+          <div class="message-row">
+            <span class="last-message">{{
+              chat.lastMessage || "Nuevo chat"
+            }}</span>
+
+            <span class="badge" *ngIf="chat.unreadCount > 0">
+              {{ chat.unreadCount }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </ng-container>
 </mat-nav-list>
