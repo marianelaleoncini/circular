@@ -40,10 +40,8 @@ export class HomeComponent implements OnInit {
         this.allPosts = posts;
         this.filteredPosts = posts;
         this.isLoading = false;
-        console.log('Home loaded:', posts.length, 'posts');
       },
       error: (err) => {
-        console.error('Error loading posts', err);
         this.isLoading = false;
       },
     });

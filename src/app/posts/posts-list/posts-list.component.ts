@@ -20,7 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class PostsListComponent implements OnInit, OnChanges {
   postList: any[] = [];
-  @Input() externalPosts: any[] | null = null;
+  @Input() externalPosts: any[] = [];
   @Input() use: 'home' | 'active-post' | 'inactive-post' | 'search-results' =
     'home';
 

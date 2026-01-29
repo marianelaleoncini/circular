@@ -20,10 +20,5 @@
 
     <app-posts-list use="search-results" [externalPosts]="filteredPosts">
     </app-posts-list>
-
-    <div class="empty-state" *ngIf="filteredPosts.length === 0">
-      <mat-icon>search_off</mat-icon>
-      <p>No hay publicaciones que coincidan con tu búsqueda.</p>
-    </div>
   </div>
 </div>
