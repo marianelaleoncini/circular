@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';
-import { Observable, map, of, switchMap } from 'rxjs';
+import { Observable, forkJoin, map, of, switchMap, take } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Injectable({ providedIn: 'root' })
@@ -185,5 +185,51 @@ export class ChatService {
         }
       });
     });
+  }
+
+  getPotentialBuyers(): Observable<any[]> {
+    return this.afAuth.authState.pipe(
+      take(1), // Tomamos solo el estado actual para que no quede escuchando
+      switchMap((user) => {
+        if (!user) return of([]);
+
+        // Buscamos los chats donde el usuario actual es participante
+        return this.afs
+          .collection('chats', (ref) => ref.where('participants', 'array-contains', user.uid))
+          .get()
+          .pipe(
+            switchMap((snapshot) => {
+              if (snapshot.empty) return of([]);
+
+              // Extraemos los IDs de las otras personas con las que chateó
+              const otherUserIds = snapshot.docs
+                .map((doc) => {
+                  const data = doc.data() as any;
+                  return data.participants.find((p: string) => p !== user.uid);
+                })
+                .filter((id) => !!id);
+
+              if (otherUserIds.length === 0) return of([]);
+
+              // Por cada ID, vamos a buscar sus datos a la colección 'users'
+              const userRequests = otherUserIds.map((id) =>
+                this.afs.doc(`users/${id}`).get().pipe(
+                  map((userDoc) => {
+                    const userData = userDoc.data() as any;
+                    return {
+                      id,
+                      name: userData?.displayName || 'Usuario sin nombre',
+                      photoURL: userData?.photoURL || null,
+                    };
+                  })
+                )
+              );
+
+              // forkJoin ejecuta todas las búsquedas en paralelo y devuelve el array armado
+              return forkJoin(userRequests);
+            })
+          );
+      })
+    );
   }
 }

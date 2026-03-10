@@ -1,74 +1,96 @@
 <mat-toolbar>
-  <button mat-icon-button class="example-icon" aria-label="arrow back" (click)="goBack()">
+  <button mat-icon-button aria-label="arrow back" (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <span>Perfil</span>
 </mat-toolbar>
 
-<div class="profile">
-  <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
-    
-    <div class="profile-header">
-      <h2>Editar Perfil</h2>
-      <button mat-button class="logout-button" aria-label="Cerrar sesión" (click)="logout()">
-        <mat-icon>logout</mat-icon>
-      </button>
-    </div>
-
-    <div class="avatar-wrapper">
-      <div class="avatar-container" (click)="fileInput.click()">
-        <img 
-          [src]="(imageUrl || user?.photoURL) ? (imageUrl || user?.photoURL) : 'assets/images/user-placeholder.png'" 
-          class="profile-image" 
-          alt="Foto de perfil"
-        />
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center" class="profile-tabs">
+  
+  <mat-tab label="Mis datos">
+    <div class="profile">
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
         
-        <div class="loading-overlay" *ngIf="uploadingImage">
-          <mat-spinner diameter="40" color="accent"></mat-spinner>
+        <div class="profile-header">
+          <h2>Editar Perfil</h2>
+          <button mat-button type="button" class="logout-button" aria-label="Cerrar sesión" (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span class="logout-text">Cerrar sesión</span>
+          </button>
         </div>
-
-        <button 
-          mat-mini-fab 
-          color="primary" 
-          class="edit-btn" 
-          type="button"
-          [disabled]="uploadingImage">
-          <mat-icon>edit</mat-icon> 
+    
+        <div class="avatar-wrapper">
+          <div class="avatar-container" (click)="fileInput.click()">
+            <img 
+              [src]="(imageUrl || user?.photoURL) ? (imageUrl || user?.photoURL) : 'assets/images/user-placeholder.png'" 
+              class="profile-image" 
+              alt="Foto de perfil"
+            />
+            
+            <div class="loading-overlay" *ngIf="uploadingImage">
+              <mat-spinner diameter="40" color="accent"></mat-spinner>
+            </div>
+    
+            <button 
+              mat-mini-fab 
+              color="primary" 
+              class="edit-btn" 
+              type="button"
+              [disabled]="uploadingImage">
+              <mat-icon>edit</mat-icon> 
+            </button>
+          </div>
+          <p class="change-photo-text">Cambiar foto</p>
+        </div>
+    
+        <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept="image/*" />
+    
+        <mat-form-field appearance="fill">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="name" required />
+          <mat-error *ngIf="profileForm.get('name')?.invalid">El nombre es obligatorio</mat-error>
+        </mat-form-field>
+    
+        <mat-form-field appearance="fill">
+          <mat-label>Provincia</mat-label>
+          <mat-select formControlName="province">
+            <mat-option *ngFor="let province of provinces" [value]="province.name">
+              {{ province.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+    
+        <mat-form-field appearance="fill">
+          <mat-label>Ciudad</mat-label>
+          <mat-select formControlName="city">
+            <mat-option *ngFor="let city of cities" [value]="city.name">
+              {{ city.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+    
+        <button mat-raised-button color="primary" [disabled]="isLoading" type="submit" class="save-btn">
+          <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="24" color="accent"></mat-progress-spinner>
+          <span *ngIf="!isLoading">Guardar</span>
         </button>
-      </div>
-
-      <p class="change-photo-text">Cambiar foto</p>
+      </form>
     </div>
+  </mat-tab>
 
-    <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept="image/*" />
+  <mat-tab label="Mis compras">
+    <div class="tab-content empty-state">
+      <mat-icon class="empty-icon">shopping_bag</mat-icon>
+      <h3>Aún no tienes compras</h3>
+      <p>Aquí aparecerá el historial de los productos que le hayas comprado a otros usuarios.</p>
+    </div>
+  </mat-tab>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="name" required />
-      <mat-error *ngIf="profileForm.get('name')?.invalid">El nombre es obligatorio</mat-error>
-    </mat-form-field>
+  <mat-tab label="Mis ventas">
+    <div class="tab-content empty-state">
+      <mat-icon class="empty-icon">storefront</mat-icon>
+      <h3>Aún no tienes ventas</h3>
+      <p>Aquí aparecerá el historial de tus productos marcados como vendidos.</p>
+    </div>
+  </mat-tab>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Provincia</mat-label>
-      <mat-select formControlName="province">
-        <mat-option *ngFor="let province of provinces" [value]="province.name">
-          {{ province.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Ciudad</mat-label>
-      <mat-select formControlName="city">
-        <mat-option *ngFor="let city of cities" [value]="city.name">
-          {{ city.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <button mat-raised-button color="primary" [disabled]="isLoading" type="submit" class="save-btn">
-      <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="24" color="accent"></mat-progress-spinner>
-      <span *ngIf="!isLoading">Guardar</span>
-    </button>
-  </form>
-</div>
+</mat-tab-group>

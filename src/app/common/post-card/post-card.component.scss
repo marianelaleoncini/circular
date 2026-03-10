@@ -89,12 +89,30 @@
 
 .post-actions {
   display: flex;
-  justify-content: space-between;
-  padding: 10px;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px 15px;
 }
 
-.action-button {
-  width: 30%;
+.mark-sold-btn {
+  width: 100%;
+  font-weight: 500;
+  background-color: #2e7d32 !important;
+  color: white !important;
+  padding: 20px 0;
+}
+
+.secondary-actions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  button {
+    flex: 1;
+    font-size: 0.85rem;
+    min-width: unset;
+    padding: 0 4px;
+  }
 }
 
 .send-message-button {

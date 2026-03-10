@@ -3,6 +3,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { BehaviorSubject, Observable, firstValueFrom, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
+import firebase from 'firebase/compat/app';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,7 @@ import { AuthService } from '../auth/auth.service';
 export class PostService {
   constructor(
     private firestore: AngularFirestore,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   private selectedTabSubject = new BehaviorSubject<number>(0);
@@ -62,9 +63,9 @@ export class PostService {
                 return posts.filter((p) => p.userId !== user.uid);
               }
               return posts;
-            })
+            }),
           );
-      })
+      }),
     );
   }
 
@@ -74,10 +75,10 @@ export class PostService {
         if (!user) return of([]);
         return this.firestore
           .collection('posts', (ref) =>
-            ref.where('userId', '==', user.uid).where('isActive', '==', true)
+            ref.where('userId', '==', user.uid).where('isActive', '==', true),
           )
           .valueChanges({ idField: 'id' });
-      })
+      }),
     );
   }
 
@@ -88,10 +89,10 @@ export class PostService {
 
         return this.firestore
           .collection('posts', (ref) =>
-            ref.where('userId', '==', user.uid).where('isActive', '==', false)
+            ref.where('userId', '==', user.uid).where('isActive', '==', false),
           )
           .valueChanges({ idField: 'id' });
-      })
+      }),
     );
   }
 
@@ -113,5 +114,44 @@ export class PostService {
 
   setEditMode(value: boolean) {
     this.editModeSubject.next(value);
+  }
+
+  async registerTransaction(
+    post: any,
+    buyerId: string,
+    finalPrice: number,
+  ): Promise<void> {
+    const sellerId = firebase.auth().currentUser?.uid;
+    if (!sellerId) throw new Error('Usuario no autenticado');
+
+    const batch = this.firestore.firestore.batch();
+
+    // 1. Crear el registro de la transacción
+    // Creamos una nueva colección 'transactions' para mantener el historial limpio
+    const transactionRef = this.firestore.collection('transactions').doc().ref;
+
+    const transactionData = {
+      postId: post.id,
+      postTitle: post.title,
+      postImageUrl: post.imageUrl || null,
+      sellerId: sellerId,
+      buyerId: buyerId,
+      finalPrice: finalPrice,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      status: 'completed',
+    };
+
+    batch.set(transactionRef, transactionData);
+
+    // 2. Actualizar el estado del post a "vendido" e inactivo
+    const postRef = this.firestore.collection('posts').doc(post.id).ref;
+
+    batch.update(postRef, {
+      isActive: false,
+      status: 'sold', // Agregamos este flag para diferenciarlo de un post pausado
+    });
+
+    // 3. Ejecutar ambas operaciones juntas
+    return batch.commit();
   }
 }

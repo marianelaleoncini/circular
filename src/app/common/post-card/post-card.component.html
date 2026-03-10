@@ -34,35 +34,37 @@
       <strong> {{ post.price | currency }}</strong>
     </div>
   </div>
+
   <div
     *ngIf="use == 'active-post' || use == 'inactive-post'"
     class="post-actions"
   >
     <button
+      *ngIf="use === 'active-post'"
       mat-raised-button
-      color="primary"
-      class="action-button"
-      (click)="onEdit(post.id)"
+      class="mark-sold-btn"
+      (click)="onMarkAsSold(post)"
     >
-      Editar
+      Marcar como vendido
     </button>
-    <button
-      mat-raised-button
-      color="primary"
-      class="action-button"
-      (click)="onToggleActive(post.id, post.isActive)"
-    >
-      {{ post.isActive ? "Desactivar" : "Activar" }}
-    </button>
-    <button
-      mat-raised-button
-      color="primary"
-      class="action-button"
-      (click)="onDelete(post.id)"
-    >
-      Eliminar
-    </button>
+
+    <div class="secondary-actions">
+      <button mat-button color="primary" (click)="onEdit(post.id)">
+        Editar
+      </button>
+      <button
+        mat-button
+        color="primary"
+        (click)="onToggleActive(post.id, post.isActive)"
+      >
+        {{ post.isActive ? "Desactivar" : "Activar" }}
+      </button>
+      <button mat-button color="warn" (click)="onDelete(post.id)">
+        Eliminar
+      </button>
+    </div>
   </div>
+
   <button
     *ngIf="use === 'home' || use === 'search-results'"
     mat-raised-button

@@ -1,0 +1,46 @@
+<h2 mat-dialog-title>Marcar como vendido</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="saleForm" class="sale-form">
+    <p class="description">
+      Seleccioná a quién le vendiste el producto y confirmá el precio final de
+      la transacción.
+    </p>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Comprador</mat-label>
+      <mat-select formControlName="buyerId" required>
+        <mat-option
+          *ngFor="let buyer of data.potentialBuyers"
+          [value]="buyer.id"
+        >
+          {{ buyer.name }}
+        </mat-option>
+        <mat-option value="external">Alguien fuera de la app</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Precio final</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="finalPrice"
+        required
+        min="0"
+      />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="saleForm.invalid"
+    (click)="confirmSale()"
+  >
+    Confirmar Venta
+  </button>
+</mat-dialog-actions>

@@ -19,6 +19,7 @@ import { LocationService } from '../common/services/location.service';
 import { UtilsService } from '../common/services/utils.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-profile',
@@ -35,6 +36,7 @@ import { Router } from '@angular/router';
     MatSlideToggleModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    MatTabsModule
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',

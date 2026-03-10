@@ -1,0 +1,18 @@
+.sale-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 300px;
+  margin-top: 8px;
+}
+
+.description {
+  color: #666;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.full-width {
+  width: 100%;
+}

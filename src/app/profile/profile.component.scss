@@ -1,6 +1,13 @@
+// Centrado del contenedor de tabs para pantallas muy grandes (opcional)
+.profile-tabs {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 .profile {
-  margin: 1rem;
+  margin: 1.5rem 1rem;
   display: flex;
+  justify-content: center; // Centra el formulario en la pestaña
 }
 
 .profile-form {
@@ -16,6 +23,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1rem;
 
   h2 {
     margin: 0;
@@ -25,7 +33,13 @@
 
   .logout-button {
     color: #f44336;
-    width: auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .logout-text {
+      display: none; // Oculto en mobile para ahorrar espacio
+    }
   }
 }
 
@@ -33,7 +47,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 
   .avatar-container {
     position: relative;
@@ -89,10 +103,48 @@
 
 .save-btn {
   margin-top: 1rem;
+  padding: 24px 0; // Botón un poco más grande
+  font-size: 1.1rem;
+}
+
+// Estilos para los placeholders de Compras y Ventas
+.tab-content {
+  padding: 3rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: #666;
+
+  .empty-icon {
+    font-size: 80px;
+    width: 80px;
+    height: 80px;
+    color: #cfd8dc;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #333;
+  }
+
+  p {
+    margin: 0;
+    max-width: 300px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
 }
 
 @media (min-width: 600px) {
   .profile {
     margin: 2rem;
+  }
+
+  .profile-header .logout-button .logout-text {
+    display: inline; // Muestra el texto "Cerrar sesión" en desktop
   }
 }
