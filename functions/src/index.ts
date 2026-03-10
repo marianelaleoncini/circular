@@ -1,4 +1,5 @@
 import {onDocumentUpdated} from "firebase-functions/v2/firestore";
+import {setGlobalOptions} from "firebase-functions/v2";
 import * as admin from "firebase-admin";
 
 // Inicializamos la app solo si no existe ya (buena práctica)
@@ -6,61 +7,66 @@ if (admin.apps.length === 0) {
   admin.initializeApp();
 }
 
+setGlobalOptions({region: "southamerica-east1"});
+
+
 export const syncUserPosts = onDocumentUpdated(
-  "users/{userId}",
+  {
+    document: "users/{userId}",
+    memory: "512MiB",
+    timeoutSeconds: 60,
+    maxInstances: 10,
+    region: "us-central1",
+  },
   async (event) => {
     const userId = event.params.userId;
-
-    // Obtenemos los datos antes y después del cambio
     const before = event.data?.before.data();
     const after = event.data?.after.data();
 
-    // Si el documento fue creado o borrado (no actualizado), salimos
-    if (!before || !after) {
-      console.log(`User ${userId} created or deleted. No sync needed.`);
+    // LOG CRÍTICO 1: Ver qué llega realmente
+    console.log("🔥 FUNCTION TRIGGERED for:", userId);
+    console.log("BEFORE data:", JSON.stringify(before));
+    console.log("AFTER data:", JSON.stringify(after));
+
+    if (!before || !after) return;
+
+    // LOG CRÍTICO 2: Ver por qué falla la comparación
+    const changes = {
+      nameChanged: before.displayName !== after.displayName,
+      photoChanged: before.photoURL !== after.photoURL,
+      cityChanged: before.city !== after.city,
+      provinceChanged: before.province !== after.province,
+    };
+    console.log("🔍 Detected changes:", changes);
+
+    if (!Object.values(changes).some(Boolean)) {
+      console.log("❌ No relevant changes detected. Exiting.");
       return;
     }
-
-    // 1. Verificar si cambiaron los datos que nos importan
-    // Esto ahorra dinero y ejecuciones innecesarias
-    if (
-      before.displayName === after.displayName &&
-      before.photoURL === after.photoURL &&
-      before.city === after.city &&
-      before.province === after.province
-    ) {
-      console.log("No profile changes detected. Skipping post sync.");
-      return;
-    }
-
-    console.log(`Syncing profile changes for user ${userId}...`, {
-      newCity: after.city,
-      newProvince: after.province,
-    });
 
     try {
-      // 2. Buscar todos los posts de este usuario
+      // LOG CRÍTICO 3: Verificar la query
+      console.log(`Searching posts where 'userId' == '${userId}'`);
       const postsSnap = await admin
         .firestore()
         .collection("posts")
-        .where("userId", "==", userId)
+        .where("userId", "==", userId) // <--- OJO AQUÍ
         .get();
-
-      if (postsSnap.empty) {
-        console.log("User has no posts to update.");
-        return;
-      }
 
       console.log(`Found ${postsSnap.size} posts to update.`);
 
-      // 3. Ejecutar actualización en lote (Batch)
-      const batch = admin.firestore().batch();
+      if (postsSnap.empty) {
+        console.log(
+          "User has no posts or 'userId' field in posts does not match."
+        );
+        return;
+      }
 
+      const batch = admin.firestore().batch();
       postsSnap.docs.forEach((doc) => {
+        // Log para ver qué doc se está actualizando
+        console.log(`Queueing update for post ${doc.id}`);
         batch.update(doc.ref, {
-          // Usamos '?? null' para proteger contra undefined.
-          // Si after.city es undefined, se guarda null.
-          // Si es un string, se guarda el string.
           authorName: after.displayName ?? null,
           authorPhoto: after.photoURL ?? null,
           authorCity: after.city ?? null,
@@ -69,9 +75,9 @@ export const syncUserPosts = onDocumentUpdated(
       });
 
       await batch.commit();
-      console.log(`Successfully updated ${postsSnap.size} posts.`);
+      console.log("✅ Update successful!");
     } catch (error) {
-      console.error("Error updating user posts:", error);
+      console.error("🔥 Error syncing posts:", error);
     }
   }
 );

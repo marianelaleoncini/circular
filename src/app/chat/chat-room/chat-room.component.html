@@ -1,7 +1,5 @@
 <div class="chat-room">
-  
   <ng-container *ngIf="chatId; else emptyState">
-    
     <mat-toolbar class="mobile-header">
       <button mat-icon-button (click)="goBack()">
         <mat-icon>arrow_back</mat-icon>
@@ -19,9 +17,7 @@
     </mat-toolbar>
 
     <div class="messages" #messagesContainer>
-      <ng-container
-        *ngFor="let msg of messages$ | async; let i = index"
-      >
+      <ng-container *ngFor="let msg of messages$ | async; let i = index">
         <div
           class="new-messages-divider"
           *ngIf="shouldShowNewMessageDivider(i, (messages$ | async)!)"
@@ -33,13 +29,13 @@
           class="message"
           [ngClass]="{
             own: msg.senderId === chatService.getUserId(),
-            other: msg.senderId !== chatService.getUserId()
+            other: msg.senderId !== chatService.getUserId(),
           }"
         >
           <div class="bubble-container">
             <span class="bubble">{{ msg.text }}</span>
             <span class="msg-time">
-              {{ msg.timestamp?.toDate() | date : "HH:mm" }}
+              {{ msg.timestamp?.toDate() | date: "HH:mm" }}
             </span>
           </div>
         </div>
@@ -52,11 +48,16 @@
         class="chat-input"
         [(ngModel)]="newMessage"
         placeholder="Escribí un mensaje..."
+        autocomplete="off"
+        name="chatMessage"
+        inputmode="text"
         (keyup.enter)="send()"
+        (focus)="onInputFocus()"
       />
       <button
         mat-icon-button
         color="primary"
+        (mousedown)="$event.preventDefault()"
         (click)="send()"
         [disabled]="!newMessage.trim()"
       >
@@ -68,11 +69,10 @@
   <ng-template #emptyState>
     <div class="empty-state-container">
       <div class="empty-content">
-        <mat-icon class="empty-icon">forum</mat-icon> 
+        <mat-icon class="empty-icon">forum</mat-icon>
         <h2>Circular Chat</h2>
         <p>Seleccioná una conversación para comenzar a chatear.</p>
       </div>
     </div>
   </ng-template>
-
 </div>

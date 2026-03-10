@@ -108,9 +108,9 @@ export class PostComponent {
 
   loadPostData() {
     this.postsService.getPost(this.postId).subscribe((post: any) => {
-      console.log(post);
       if (post) {
         this.postForm.patchValue(post); // Rellena los campos con los datos del post
+        this.imageUrl = post.imageUrl || null;
       }
     });
   }

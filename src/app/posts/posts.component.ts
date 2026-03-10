@@ -45,6 +45,7 @@ export class PostsComponent {
       this.shouldResetForm = true;
     } else {
       this.postService.setSelectedTab(this.selectedTab);
+      this.postService.setEditMode(false);
       this.router.navigate(['/posts'], { replaceUrl: true });
     }
   }

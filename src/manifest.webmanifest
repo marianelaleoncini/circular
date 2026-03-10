@@ -1,7 +1,7 @@
 {
   "name": "circular",
   "short_name": "circular",
-  "theme_color": "#1976d2",
+  "theme_color": "#376e03",
   "background_color": "#fafafa",
   "display": "standalone",
   "scope": "./",

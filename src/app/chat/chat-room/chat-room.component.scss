@@ -1,23 +1,36 @@
+// MOBILE FIRST STRATEGY
+
 :host {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 70px);
+  display: block; // En mobile lo manejamos con fixed
 }
 
 .chat-room {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  position: relative;
+  background-color: #fff;
+
+  // [FIX CRÍTICO] Posicionamiento Fijo en Mobile
+  // Esto ancla el chat a la pantalla y evita que el header se vaya
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 70px; // Altura exacta de tu menú de navegación inferior
+
+  z-index: 100; // Asegura que esté por encima de todo menos el menú
+  overflow: hidden; // Evita scroll en el contenedor principal
 }
 
 .mobile-header {
-  flex-shrink: 0;
+  flex-shrink: 0; // No se achica
   display: flex;
   align-items: center;
   background-color: #376e03;
   color: white;
   padding: 0 8px;
+  height: 56px; // Altura estándar Material
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   button {
     color: white;
@@ -27,7 +40,6 @@
 .header-user-info {
   display: flex;
   align-items: center;
-  margin-left: 0px;
 
   .header-avatar {
     width: 36px;
@@ -41,17 +53,20 @@
   .header-name {
     font-size: 1rem;
     font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
 .messages {
-  flex: 1;
-  overflow-y: auto;
+  flex: 1; // Ocupa todo el espacio disponible entre header e input
+  overflow-y: auto; // [FIX] Solo esto hace scroll
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  background-size: 400px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .message {
@@ -61,16 +76,13 @@
 
   &.own {
     justify-content: flex-end;
-
     .bubble-container {
       background-color: #e8f5e9;
       border-radius: 7px 0 7px 7px;
     }
   }
-
   &.other {
     justify-content: flex-start;
-
     .bubble-container {
       background-color: #ffffff;
       border-radius: 0 7px 7px 7px;
@@ -94,7 +106,6 @@
   line-height: 19px;
   word-wrap: break-word;
 }
-
 .msg-time {
   font-size: 11px;
   color: #999;
@@ -105,28 +116,29 @@
 
 .new-messages-divider {
   display: flex;
-  align-items: center;
   justify-content: center;
   margin: 12px 0;
   width: 100%;
-
   span {
     background-color: #d1e7dd;
     color: #0f5132;
     padding: 4px 12px;
     border-radius: 12px;
     font-size: 0.8rem;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 }
 
 .input-container {
-  flex-shrink: 0;
+  flex-shrink: 0; // No se achica
   background-color: #f0f0f0;
   padding: 8px 10px;
   display: flex;
   align-items: center;
   gap: 8px;
+  border-top: 1px solid #ddd;
+
+  // Soporte para zonas seguras de iPhone (la rayita negra de abajo)
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
 }
 
 .chat-input {
@@ -136,12 +148,12 @@
   border-radius: 20px;
   padding: 10px 15px;
   background-color: white;
-  font-size: 15px;
+  font-size: 16px; // [FIX] 16px evita que iOS haga zoom al input
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   font-family: inherit;
+
   &::placeholder {
     color: #999;
-    font-family: inherit;
   }
 }
 
@@ -149,19 +161,33 @@
   display: none;
 }
 
-.full-width {
-  flex: 1;
-}
-
+// --- DESKTOP ---
 @media (min-width: 600px) {
   .mobile-header {
     display: none;
   }
 
   :host {
-    height: calc(100vh - 64px);
+    display: flex;
+    flex-direction: column;
+    height: 100%; // En desktop usa la altura del padre flex
+    position: relative; // Reseteamos el fixed de mobile
   }
 
+  .chat-room {
+    position: relative; // Reseteamos el fixed
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    height: 100%;
+  }
+
+  .input-container {
+    padding-bottom: 8px; // Reseteamos padding de safe area
+  }
+
+  // Estilos del Empty State (solo desktop)
   .empty-state-container {
     display: flex;
     flex-direction: column;
@@ -172,10 +198,8 @@
     text-align: center;
     border-bottom: 6px solid #5f8b35;
   }
-
   .empty-content {
     color: #666;
-
     .empty-icon {
       font-size: 80px;
       width: 80px;
@@ -183,14 +207,12 @@
       color: #d1d7db;
       margin-bottom: 20px;
     }
-
     h2 {
       font-size: 24px;
       font-weight: 300;
       margin-bottom: 10px;
       color: #41525d;
     }
-
     p {
       font-size: 14px;
       color: #8696a0;
