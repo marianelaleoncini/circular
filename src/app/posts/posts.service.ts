@@ -116,42 +116,118 @@ export class PostService {
     this.editModeSubject.next(value);
   }
 
+  // Cambiamos 'buyerId: string' por 'buyer: any'
   async registerTransaction(
     post: any,
-    buyerId: string,
+    buyer: any,
     finalPrice: number,
   ): Promise<void> {
     const sellerId = firebase.auth().currentUser?.uid;
     if (!sellerId) throw new Error('Usuario no autenticado');
 
     const batch = this.firestore.firestore.batch();
-
-    // 1. Crear el registro de la transacción
-    // Creamos una nueva colección 'transactions' para mantener el historial limpio
     const transactionRef = this.firestore.collection('transactions').doc().ref;
 
+    // Agregamos toda la info de contexto a la transacción
     const transactionData = {
       postId: post.id,
       postTitle: post.title,
       postImageUrl: post.imageUrl || null,
+      postCategory: post.category || 'Otros', // <-- CATEGORÍA
+
+      // Info del vendedor (quien hace la acción)
       sellerId: sellerId,
-      buyerId: buyerId,
+      sellerName: post.authorName,
+      sellerPhoto: post.authorPhoto || null,
+
+      // Info del comprador (seleccionado en el modal)
+      buyerId: buyer.id,
+      buyerName: buyer.name,
+      buyerPhoto: buyer.photoURL || null,
+
       finalPrice: finalPrice,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       status: 'completed',
+
+      // Banderas para el sistema de calificación
+      buyerRatedSeller: false,
+      sellerRatedBuyer: false,
     };
 
     batch.set(transactionRef, transactionData);
 
-    // 2. Actualizar el estado del post a "vendido" e inactivo
     const postRef = this.firestore.collection('posts').doc(post.id).ref;
-
     batch.update(postRef, {
       isActive: false,
-      status: 'sold', // Agregamos este flag para diferenciarlo de un post pausado
+      status: 'sold',
     });
 
-    // 3. Ejecutar ambas operaciones juntas
     return batch.commit();
+  }
+
+  // Obtener las ventas del usuario
+  getUserSales(userId: string): Observable<any[]> {
+    return this.firestore
+      .collection('transactions', (ref) =>
+        ref.where('sellerId', '==', userId).orderBy('timestamp', 'desc'),
+      )
+      .valueChanges({ idField: 'id' });
+  }
+
+  // Obtener las compras del usuario
+  getUserPurchases(userId: string): Observable<any[]> {
+    return this.firestore
+      .collection('transactions', (ref) =>
+        ref.where('buyerId', '==', userId).orderBy('timestamp', 'desc'),
+      )
+      .valueChanges({ idField: 'id' });
+  }
+
+  async saveRating(
+    transactionId: string,
+    targetUserId: string,
+    ratingData: any,
+    myRole: 'buyer' | 'seller',
+  ): Promise<void> {
+    const currentUserId = firebase.auth().currentUser?.uid;
+    if (!currentUserId) throw new Error('Usuario no autenticado');
+
+    const batch = this.firestore.firestore.batch();
+
+    // 1. Crear el registro en la colección 'ratings'
+    const ratingRef = this.firestore.collection('ratings').doc().ref;
+    batch.set(ratingRef, {
+      transactionId: transactionId,
+      raterId: currentUserId,
+      targetUserId: targetUserId,
+      rating: ratingData.rating,
+      comment: ratingData.comment || '',
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      role: myRole, // Guardamos si el que calificó fue el comprador o el vendedor
+    });
+
+    // 2. Actualizar la transacción para que desaparezca el botón
+    const transactionRef = this.firestore
+      .collection('transactions')
+      .doc(transactionId).ref;
+
+    if (myRole === 'buyer') {
+      // El comprador acaba de calificar al vendedor
+      batch.update(transactionRef, { buyerRatedSeller: true });
+    } else {
+      // El vendedor acaba de calificar al comprador
+      batch.update(transactionRef, { sellerRatedBuyer: true });
+    }
+
+    return batch.commit();
+  }
+
+  // Obtener las calificaciones recibidas por un usuario
+  getUserRatings(userId: string): Observable<any[]> {
+    return this.firestore
+      .collection('ratings', (ref) =>
+        ref.where('targetUserId', '==', userId).orderBy('timestamp', 'desc'),
+      )
+      .valueChanges({ idField: 'id' });
   }
 }

@@ -1,0 +1,49 @@
+.rating-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 300px;
+  margin-top: 8px;
+}
+
+.description {
+  color: #666;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.stars-container {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 0;
+
+  .star-btn {
+    transform: scale(1.4); // Hacemos las estrellas más grandes y tocables
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: scale(1.6);
+    }
+
+    mat-icon {
+      color: #cfd8dc; // Gris clarito para las vacías
+      transition: color 0.2s ease-in-out;
+
+      &.filled {
+        color: #ffb300; // Dorado/Amarillo para las seleccionadas
+      }
+    }
+  }
+}
+
+.error-msg {
+  color: #f44336;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: -8px;
+}
+
+.full-width {
+  width: 100%;
+}

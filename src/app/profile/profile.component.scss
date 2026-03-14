@@ -1,13 +1,21 @@
-// Centrado del contenedor de tabs para pantallas muy grandes (opcional)
+// ==========================================
+// 1. ESTILOS DEL CONTENEDOR Y TABS
+// ==========================================
 .profile-tabs {
   max-width: 800px;
   margin: 0 auto;
 }
 
+::ng-deep .mat-mdc-tab-body-wrapper {
+  flex-grow: 1;
+}
+
+// ==========================================
+// 2. PESTAÑA 1: FORMULARIO DE PERFIL
+// ==========================================
 .profile {
   margin: 1.5rem 1rem;
   display: flex;
-  justify-content: center; // Centra el formulario en la pestaña
 }
 
 .profile-form {
@@ -15,7 +23,7 @@
   flex-direction: column;
   gap: 16px;
   width: 100%;
-  max-width: 500px; 
+  max-width: 850px;
 }
 
 .profile-header {
@@ -38,7 +46,7 @@
     gap: 4px;
 
     .logout-text {
-      display: none; // Oculto en mobile para ahorrar espacio
+      display: none;
     }
   }
 }
@@ -66,7 +74,7 @@
       object-fit: cover;
       border-radius: 50%;
       border: 3px solid #fff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
       background-color: #e0e0e0;
     }
 
@@ -84,7 +92,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(255,255,255,0.6);
+      background: rgba(255, 255, 255, 0.6);
       border-radius: 50%;
       display: flex;
       justify-content: center;
@@ -103,11 +111,13 @@
 
 .save-btn {
   margin-top: 1rem;
-  padding: 24px 0; // Botón un poco más grande
+  padding: 24px 0;
   font-size: 1.1rem;
 }
 
-// Estilos para los placeholders de Compras y Ventas
+// ==========================================
+// 3. ESTADOS VACÍOS (COMPRAS/VENTAS)
+// ==========================================
 .tab-content {
   padding: 3rem 1.5rem;
   display: flex;
@@ -139,12 +149,329 @@
   }
 }
 
+// ==========================================
+// 4. HISTORIAL DE TRANSACCIONES (LIMPIO Y RESPONSIVE)
+// ==========================================
+
+.transactions-container {
+  padding: 1rem;
+  max-width: 850px; // Un poco más ancho para que respire en desktop
+  margin: 0 auto;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 1rem;
+}
+
+// La tarjeta base
+.transaction-card {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch; /* <-- CAMBIO ACÁ: antes decía center */
+  justify-content: space-between;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  border: 1px solid #eef0f2;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 650px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 16px 12px;
+  }
+}
+
+// COLUMNA 1: Imagen y datos del producto
+.tx-product-section {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+  flex: 1 1 0;
+  min-width: 0;
+
+  @media (max-width: 650px) {
+    width: 100%;
+    flex: auto; // Reseteamos en mobile
+  }
+}
+
+.tx-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  flex-shrink: 0;
+}
+
+.tx-main-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+  min-width: 0; // CRUCIAL para el texto interno
+  width: 100%;
+
+  .tx-category {
+    background-color: #f0f0f0;
+    color: #555;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: fit-content;
+  }
+
+  .tx-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+    // Las 3 propiedades mágicas para los puntos suspensivos:
+    white-space: nowrap; // Evita que baje a una segunda línea
+    overflow: hidden; // Oculta lo que se sale del contenedor
+    text-overflow: ellipsis; // Pone los "..." al final
+  }
+
+  .tx-price {
+    font-weight: 600;
+    color: #2e7d32;
+    font-size: 1.05rem;
+  }
+}
+
+// COLUMNA 2: Info del usuario cruzado
+.tx-user-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-width: 160px;
+  gap: 6px;
+
+  @media (max-width: 650px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 8px 12px;
+    border-radius: 6px;
+  }
+
+  .user-role {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px; // Pequeño ajuste visual para alinear con la categoría
+  }
+
+  .user-data {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      background-color: #e0e0e0;
+    }
+
+    strong {
+      font-size: 0.95rem;
+      color: #222;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 120px;
+    }
+  }
+}
+
+// COLUMNA 3: Botón y fecha
+.tx-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex: 1 1 0; // Fuerzo a que ocupe 1 fracción igual
+  min-width: 0;
+
+  @media (max-width: 650px) {
+    width: 100%;
+    flex: auto; // Reseteamos en mobile
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .tx-date {
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 2px;
+  }
+
+  button {
+    width: 100%;
+    max-width: 150px; // Evita que se estire demasiado si la pantalla es muy ancha
+    @media (max-width: 650px) {
+      width: auto;
+    }
+  }
+
+  .status-badge {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+}
+// ==========================================
+// 6. MI REPUTACIÓN (CALIFICACIONES)
+// ==========================================
+
+.ratings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: 1rem;
+}
+
+// Bloque de Resumen (Promedio)
+.rating-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8fcf8;
+  border: 1px solid #e8f5e9;
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+
+  .average-score {
+    font-size: 3.5rem;
+    font-weight: 600;
+    color: #2e7d32;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stars-display {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      color: #cfd8dc;
+
+      &.filled {
+        color: #ffb300;
+      }
+    }
+  }
+
+  .total-reviews {
+    color: #666;
+    font-size: 0.95rem;
+  }
+}
+
+// Tarjetas de Comentarios
+.rating-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  border: 1px solid #eef0f2;
+  gap: 12px;
+
+  .rating-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .stars-small {
+      display: flex;
+      gap: 2px;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: #cfd8dc;
+
+        &.filled {
+          color: #ffb300;
+        }
+      }
+    }
+
+    .rating-date {
+      font-size: 0.85rem;
+      color: #888;
+    }
+  }
+
+  .rating-comment {
+    margin: 0;
+    font-size: 1rem;
+    color: #333;
+    font-style: italic;
+    line-height: 1.4;
+
+    &.empty-comment {
+      color: #999;
+      font-size: 0.9rem;
+    }
+  }
+
+  .rating-role {
+    font-size: 0.8rem;
+    color: #777;
+    background-color: #f5f5f5;
+    padding: 4px 8px;
+    border-radius: 4px;
+    width: fit-content;
+
+    strong {
+      color: #444;
+    }
+  }
+}
+
 @media (min-width: 600px) {
   .profile {
     margin: 2rem;
   }
 
   .profile-header .logout-button .logout-text {
-    display: inline; // Muestra el texto "Cerrar sesión" en desktop
+    display: inline;
   }
 }

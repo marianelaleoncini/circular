@@ -5,61 +5,89 @@
   <span>Perfil</span>
 </mat-toolbar>
 
-<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center" class="profile-tabs">
-  
+<mat-tab-group
+  mat-stretch-tabs="false"
+  mat-align-tabs="center"
+  class="profile-tabs"
+>
   <mat-tab label="Mis datos">
     <div class="profile">
-      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
-        
+      <form
+        [formGroup]="profileForm"
+        (ngSubmit)="saveProfile()"
+        class="profile-form"
+      >
         <div class="profile-header">
           <h2>Editar Perfil</h2>
-          <button mat-button type="button" class="logout-button" aria-label="Cerrar sesión" (click)="logout()">
+          <button
+            mat-button
+            type="button"
+            class="logout-button"
+            aria-label="Cerrar sesión"
+            (click)="logout()"
+          >
             <mat-icon>logout</mat-icon>
             <span class="logout-text">Cerrar sesión</span>
           </button>
         </div>
-    
+
         <div class="avatar-wrapper">
           <div class="avatar-container" (click)="fileInput.click()">
-            <img 
-              [src]="(imageUrl || user?.photoURL) ? (imageUrl || user?.photoURL) : 'assets/images/user-placeholder.png'" 
-              class="profile-image" 
+            <img
+              [src]="
+                imageUrl || user?.photoURL
+                  ? imageUrl || user?.photoURL
+                  : 'assets/images/user-placeholder.png'
+              "
+              class="profile-image"
               alt="Foto de perfil"
             />
-            
+
             <div class="loading-overlay" *ngIf="uploadingImage">
               <mat-spinner diameter="40" color="accent"></mat-spinner>
             </div>
-    
-            <button 
-              mat-mini-fab 
-              color="primary" 
-              class="edit-btn" 
+
+            <button
+              mat-mini-fab
+              color="primary"
+              class="edit-btn"
               type="button"
-              [disabled]="uploadingImage">
-              <mat-icon>edit</mat-icon> 
+              [disabled]="uploadingImage"
+            >
+              <mat-icon>edit</mat-icon>
             </button>
           </div>
           <p class="change-photo-text">Cambiar foto</p>
         </div>
-    
-        <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept="image/*" />
-    
+
+        <input
+          #fileInput
+          type="file"
+          hidden
+          (change)="onFileSelected($event)"
+          accept="image/*"
+        />
+
         <mat-form-field appearance="fill">
           <mat-label>Nombre</mat-label>
           <input matInput formControlName="name" required />
-          <mat-error *ngIf="profileForm.get('name')?.invalid">El nombre es obligatorio</mat-error>
+          <mat-error *ngIf="profileForm.get('name')?.invalid"
+            >El nombre es obligatorio</mat-error
+          >
         </mat-form-field>
-    
+
         <mat-form-field appearance="fill">
           <mat-label>Provincia</mat-label>
           <mat-select formControlName="province">
-            <mat-option *ngFor="let province of provinces" [value]="province.name">
+            <mat-option
+              *ngFor="let province of provinces"
+              [value]="province.name"
+            >
               {{ province.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
-    
+
         <mat-form-field appearance="fill">
           <mat-label>Ciudad</mat-label>
           <mat-select formControlName="city">
@@ -68,29 +96,210 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-    
-        <button mat-raised-button color="primary" [disabled]="isLoading" type="submit" class="save-btn">
-          <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="24" color="accent"></mat-progress-spinner>
+
+        <button
+          mat-raised-button
+          color="primary"
+          [disabled]="isLoading"
+          type="submit"
+          class="save-btn"
+        >
+          <mat-progress-spinner
+            *ngIf="isLoading"
+            mode="indeterminate"
+            diameter="24"
+            color="accent"
+          ></mat-progress-spinner>
           <span *ngIf="!isLoading">Guardar</span>
         </button>
       </form>
     </div>
   </mat-tab>
-
   <mat-tab label="Mis compras">
-    <div class="tab-content empty-state">
-      <mat-icon class="empty-icon">shopping_bag</mat-icon>
-      <h3>Aún no tienes compras</h3>
-      <p>Aquí aparecerá el historial de los productos que le hayas comprado a otros usuarios.</p>
+    <div class="transactions-container">
+      <div class="loading-state" *ngIf="isLoadingHistory">
+        <mat-spinner diameter="40" color="primary"></mat-spinner>
+      </div>
+
+      <div
+        class="tab-content empty-state"
+        *ngIf="!isLoadingHistory && purchases.length === 0"
+      >
+        <mat-icon class="empty-icon">shopping_bag</mat-icon>
+        <h3>Aún no tienes compras</h3>
+        <p>
+          Aquí aparecerá el historial de los productos que le hayas comprado a
+          otros usuarios.
+        </p>
+      </div>
+
+      <div
+        class="transaction-list"
+        *ngIf="!isLoadingHistory && purchases.length > 0"
+      >
+        <div class="transaction-card" *ngFor="let item of purchases">
+          <div class="tx-product-section">
+            <img
+              [src]="item.postImageUrl || 'assets/images/placeholder.png'"
+              class="tx-image"
+              alt="Producto"
+            />
+            <div class="tx-main-info">
+              <span class="tx-category">{{ item.postCategory }}</span>
+              <h4 class="tx-title" [title]="item.postTitle">
+                {{ item.postTitle }}
+              </h4>
+              <span class="tx-price">{{ item.finalPrice | currency }}</span>
+            </div>
+          </div>
+
+          <div class="tx-user-info">
+            <span class="user-role">Vendedor</span>
+            <div class="user-data">
+              <img
+                [src]="item.sellerPhoto || 'assets/images/user-placeholder.png'"
+                alt="Avatar Vendedor"
+              />
+              <strong>{{ item.sellerName }}</strong>
+            </div>
+          </div>
+
+          <div class="tx-actions">
+            <span class="tx-date">{{
+              item.timestamp?.toDate() | date: "dd/MM/yyyy"
+            }}</span>
+            <button
+              mat-stroked-button
+              color="primary"
+              *ngIf="!item.buyerRatedSeller"
+              (click)="openRatingDialog(item, 'buyer')"
+            >
+              Calificar
+            </button>
+            <span class="status-badge" *ngIf="item.buyerRatedSeller"
+              >Ya calificaste</span
+            >
+          </div>
+        </div>
+      </div>
     </div>
   </mat-tab>
 
   <mat-tab label="Mis ventas">
-    <div class="tab-content empty-state">
-      <mat-icon class="empty-icon">storefront</mat-icon>
-      <h3>Aún no tienes ventas</h3>
-      <p>Aquí aparecerá el historial de tus productos marcados como vendidos.</p>
+    <div class="transactions-container">
+      <div class="loading-state" *ngIf="isLoadingHistory">
+        <mat-spinner diameter="40" color="primary"></mat-spinner>
+      </div>
+
+      <div
+        class="tab-content empty-state"
+        *ngIf="!isLoadingHistory && sales.length === 0"
+      >
+        <mat-icon class="empty-icon">storefront</mat-icon>
+        <h3>Aún no tienes ventas</h3>
+        <p>
+          Aquí aparecerá el historial de tus productos marcados como vendidos.
+        </p>
+      </div>
+
+      <div
+        class="transaction-list"
+        *ngIf="!isLoadingHistory && sales.length > 0"
+      >
+        <div class="transaction-card" *ngFor="let item of sales">
+          <div class="tx-product-section">
+            <img
+              [src]="item.postImageUrl || 'assets/images/placeholder.png'"
+              class="tx-image"
+              alt="Producto"
+            />
+            <div class="tx-main-info">
+              <span class="tx-category">{{ item.postCategory }}</span>
+              <h4 class="tx-title" [title]="item.postTitle">
+                {{ item.postTitle }}
+              </h4>
+              <span class="tx-price">{{ item.finalPrice | currency }}</span>
+            </div>
+          </div>
+
+          <div class="tx-user-info">
+            <span class="user-role">Comprador</span>
+            <div class="user-data">
+              <img
+                [src]="item.buyerPhoto || 'assets/images/user-placeholder.png'"
+                alt="Avatar Comprador"
+              />
+              <strong>{{ item.buyerName }}</strong>
+            </div>
+          </div>
+
+          <div class="tx-actions">
+            <span class="tx-date">{{
+              item.timestamp?.toDate() | date: "dd/MM/yyyy"
+            }}</span>
+            <button
+              mat-stroked-button
+              color="primary"
+              *ngIf="!item.sellerRatedBuyer"
+              (click)="openRatingDialog(item, 'seller')"
+            >
+              Calificar
+            </button>
+            <span class="status-badge" *ngIf="item.sellerRatedBuyer"
+              >Ya calificaste</span
+            >
+          </div>
+        </div>
+      </div>
     </div>
   </mat-tab>
 
+  <mat-tab label="Mi reputación">
+    <div class="transactions-container">
+      
+      <div class="loading-state" *ngIf="isLoadingRatings">
+        <mat-spinner diameter="40" color="primary"></mat-spinner>
+      </div>
+
+      <div class="tab-content empty-state" *ngIf="!isLoadingRatings && ratings.length === 0">
+        <mat-icon class="empty-icon">star_border</mat-icon>
+        <h3>Aún no tienes calificaciones</h3>
+        <p>Cuando otros usuarios te califiquen por tus compras o ventas, aparecerán aquí.</p>
+      </div>
+
+      <div class="ratings-content" *ngIf="!isLoadingRatings && ratings.length > 0">
+        
+        <div class="rating-summary">
+          <div class="average-score">{{ averageRating | number:'1.1-1' }}</div>
+          <div class="stars-display">
+            <mat-icon *ngFor="let star of getStarsArray(averageRating)" [class.filled]="star <= averageRating">
+              {{ star <= averageRating ? 'star' : (star - 0.5 <= averageRating ? 'star_half' : 'star_border') }}
+            </mat-icon>
+          </div>
+          <div class="total-reviews">{{ ratings.length }} {{ ratings.length === 1 ? 'calificación' : 'calificaciones' }}</div>
+        </div>
+
+        <div class="transaction-list">
+          <div class="rating-card" *ngFor="let review of ratings">
+            <div class="rating-header">
+              <div class="stars-small">
+                <mat-icon *ngFor="let star of getStarsArray(review.rating)" [class.filled]="star <= review.rating">
+                  {{ star <= review.rating ? 'star' : 'star_border' }}
+                </mat-icon>
+              </div>
+              <span class="rating-date">{{ review.timestamp?.toDate() | date:'dd/MM/yyyy' }}</span>
+            </div>
+            
+            <p class="rating-comment" *ngIf="review.comment">"{{ review.comment }}"</p>
+            <p class="rating-comment empty-comment" *ngIf="!review.comment">El usuario no dejó ningún comentario.</p>
+            
+            <div class="rating-role">
+              Rol en la transacción: <strong>{{ review.role === 'buyer' ? 'Vendedor' : 'Comprador' }}</strong>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </mat-tab>
 </mat-tab-group>

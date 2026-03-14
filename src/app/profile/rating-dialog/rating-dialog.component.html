@@ -1,0 +1,56 @@
+<h2 mat-dialog-title>Calificar a {{ data.userName }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="ratingForm" class="rating-form">
+    <p class="description">¿Cómo fue tu experiencia con esta transacción?</p>
+
+    <div class="stars-container" (mouseleave)="hoveredRating = 0">
+      <button
+        *ngFor="let star of stars"
+        type="button"
+        mat-icon-button
+        class="star-btn"
+        (mouseenter)="hoveredRating = star"
+        (click)="setRating(star)"
+      >
+        <mat-icon [class.filled]="star <= (hoveredRating || currentRating)">
+          {{
+            star <= (hoveredRating || currentRating) ? "star" : "star_border"
+          }}
+        </mat-icon>
+      </button>
+    </div>
+
+    <div
+      class="error-msg"
+      *ngIf="ratingForm.get('rating')?.touched && currentRating === 0"
+    >
+      Por favor, seleccioná una calificación.
+    </div>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Comentario (opcional)</mat-label>
+      <textarea
+        matInput
+        formControlName="comment"
+        rows="3"
+        placeholder="Dejá un comentario sobre el usuario..."
+      ></textarea>
+      <mat-hint align="end"
+        >{{ ratingForm.get("comment")?.value?.length || 0 }} / 300</mat-hint
+      >
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="ratingForm.invalid || currentRating === 0"
+    (click)="submitRating()"
+  >
+    Enviar calificación
+  </button>
+</mat-dialog-actions>

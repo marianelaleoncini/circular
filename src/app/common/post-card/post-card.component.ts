@@ -55,33 +55,38 @@ export class PostCardComponent {
 
   onMarkAsSold(post: any) {
     this.chatService.getPotentialBuyers().subscribe((buyers) => {
+      
       const dialogRef = this.dialog.open(RegisterSaleDialogComponent, {
         width: '400px',
         data: {
           originalPrice: post.price,
-          potentialBuyers: buyers,
-        },
+          potentialBuyers: buyers
+        }
       });
 
-      dialogRef.afterClosed().subscribe((result) => {
+      dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.postService
-            .registerTransaction(post, result.buyerId, result.finalPrice)
+          // Buscamos el objeto completo del comprador usando el ID que eligió
+          const selectedBuyer = buyers.find(b => b.id === result.buyerId);
+
+          // Si eligió "Alguien externo", armamos un objeto genérico
+          const buyerData = selectedBuyer || { 
+            id: 'external', 
+            name: 'Usuario externo', 
+            photoURL: null 
+          };
+
+          this.postService.registerTransaction(post, buyerData, result.finalPrice)
             .then(() => {
-              this.snackBar.open('¡Venta registrada con éxito!', 'Cerrar', {
-                duration: 3000,
-              });
+              this.snackBar.open('¡Venta registrada con éxito!', 'Cerrar', { duration: 3000 });
             })
-            .catch((error) => {
-              console.error('Error al registrar la venta:', error);
-              this.snackBar.open(
-                'Error al procesar la venta. Intenta nuevamente.',
-                'Cerrar',
-                { duration: 3000 },
-              );
+            .catch(error => {
+              console.error('Error al registrar:', error);
+              this.snackBar.open('Error al procesar la venta.', 'Cerrar', { duration: 3000 });
             });
         }
       });
+      
     });
   }
 }

@@ -20,6 +20,9 @@ import { UtilsService } from '../common/services/utils.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
+import { PostService } from '../posts/posts.service';
+import { MatDialog } from '@angular/material/dialog';
+import { RatingDialogComponent } from './rating-dialog/rating-dialog.component';
 
 @Component({
   selector: 'app-profile',
@@ -36,7 +39,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatSlideToggleModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatTabsModule
+    MatTabsModule,
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
@@ -51,6 +54,12 @@ export class ProfileComponent implements OnInit {
   selectedCity: any;
   uploadingImage = false;
   imageUrl: any;
+  sales: any[] = [];
+  purchases: any[] = [];
+  isLoadingHistory = true;
+  ratings: any[] = [];
+  averageRating: number = 0;
+  isLoadingRatings = true;
 
   constructor(
     private authService: AuthService,
@@ -58,7 +67,9 @@ export class ProfileComponent implements OnInit {
     private locationService: LocationService,
     private utilsService: UtilsService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private postService: PostService,
+    private dialog: MatDialog
   ) {
     this.profileForm = this.fb.group({
       name: ['', Validators.required],
@@ -85,13 +96,15 @@ export class ProfileComponent implements OnInit {
             province: this.user.province || '',
             city: this.user.city || '',
           },
-          { emitEvent: false }
+          { emitEvent: false },
         );
 
         if (this.user.province) {
           this.loadCities(this.user.province, this.user.city);
           this.profileForm.get('city')?.enable({ emitEvent: false });
         }
+
+        this.loadTransactionHistory(this.user.uid);
       }
     });
 
@@ -149,6 +162,71 @@ export class ProfileComponent implements OnInit {
         this.uploadingImage = false;
       });
     }
+  }
+
+ loadTransactionHistory(userId: string) {
+    this.isLoadingHistory = true;
+    this.isLoadingRatings = true; // Iniciamos la carga
+    
+    this.postService.getUserSales(userId).subscribe((data) => {
+      this.sales = data;
+    });
+
+    this.postService.getUserPurchases(userId).subscribe((data) => {
+      this.purchases = data;
+      this.isLoadingHistory = false;
+    });
+
+    // NUEVO: Cargar calificaciones y calcular promedio
+    this.postService.getUserRatings(userId).subscribe((data) => {
+      this.ratings = data;
+      this.calculateAverageRating();
+      this.isLoadingRatings = false;
+    });
+  }
+
+  openRatingDialog(transaction: any, myRole: 'buyer' | 'seller') {
+    // Definimos a quién estamos calificando según nuestro rol en esa transacción
+    const targetUserId = myRole === 'buyer' ? transaction.sellerId : transaction.buyerId;
+    const targetUserName = myRole === 'buyer' ? transaction.sellerName : transaction.buyerName;
+
+    const dialogRef = this.dialog.open(RatingDialogComponent, {
+      width: '400px',
+      data: {
+        userName: targetUserName,
+        targetUserId: targetUserId,
+        transactionId: transaction.id
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Si el usuario llenó las estrellas y le dio a enviar, guardamos en BD
+        this.postService.saveRating(transaction.id, targetUserId, result, myRole)
+          .then(() => {
+            this.snackBar.open('¡Calificación enviada con éxito!', 'Cerrar', { duration: 3000 });
+            // Al usar valueChanges en loadTransactionHistory, la vista se actualizará sola
+          })
+          .catch(error => {
+            console.error('Error al guardar calificación:', error);
+            this.snackBar.open('Hubo un error al enviar la calificación.', 'Cerrar', { duration: 3000 });
+          });
+      }
+    });
+  }
+
+  calculateAverageRating() {
+    if (this.ratings.length === 0) {
+      this.averageRating = 0;
+      return;
+    }
+    const sum = this.ratings.reduce((acc, curr) => acc + curr.rating, 0);
+    this.averageRating = sum / this.ratings.length;
+  }
+
+  // Funciones útiles para pintar las estrellitas en el HTML
+  getStarsArray(rating: number): number[] {
+    return Array(5).fill(0).map((x, i) => i + 1);
   }
 
   goBack() {
