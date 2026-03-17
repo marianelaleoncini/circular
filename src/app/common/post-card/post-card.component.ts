@@ -8,11 +8,18 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { RegisterSaleDialogComponent } from '../../posts/register-sale-dialog/register-sale-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-post-card',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatDialogModule],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatIconModule,
+  ],
   templateUrl: './post-card.component.html',
   styleUrl: './post-card.component.scss',
 })
@@ -22,6 +29,8 @@ export class PostCardComponent {
     'home';
 
   imageLoaded = false;
+  averageRating: number = 0;
+  totalReviews: number = 0;
 
   constructor(
     private postService: PostService,
@@ -30,6 +39,12 @@ export class PostCardComponent {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
   ) {}
+
+  ngOnInit() {
+    if (this.post && this.post.userId) {
+      this.loadSellerRating(this.post.userId);
+    }
+  }
 
   onDelete(postId: string) {
     this.postService.deletePost(postId);
@@ -55,38 +70,61 @@ export class PostCardComponent {
 
   onMarkAsSold(post: any) {
     this.chatService.getPotentialBuyers().subscribe((buyers) => {
-      
       const dialogRef = this.dialog.open(RegisterSaleDialogComponent, {
         width: '400px',
         data: {
           originalPrice: post.price,
-          potentialBuyers: buyers
-        }
+          potentialBuyers: buyers,
+        },
       });
 
-      dialogRef.afterClosed().subscribe(result => {
+      dialogRef.afterClosed().subscribe((result) => {
         if (result) {
           // Buscamos el objeto completo del comprador usando el ID que eligió
-          const selectedBuyer = buyers.find(b => b.id === result.buyerId);
+          const selectedBuyer = buyers.find((b) => b.id === result.buyerId);
 
           // Si eligió "Alguien externo", armamos un objeto genérico
-          const buyerData = selectedBuyer || { 
-            id: 'external', 
-            name: 'Usuario externo', 
-            photoURL: null 
+          const buyerData = selectedBuyer || {
+            id: 'external',
+            name: 'Usuario externo',
+            photoURL: null,
           };
 
-          this.postService.registerTransaction(post, buyerData, result.finalPrice)
+          this.postService
+            .registerTransaction(post, buyerData, result.finalPrice)
             .then(() => {
-              this.snackBar.open('¡Venta registrada con éxito!', 'Cerrar', { duration: 3000 });
+              this.snackBar.open('¡Venta registrada con éxito!', 'Cerrar', {
+                duration: 3000,
+              });
             })
-            .catch(error => {
+            .catch((error) => {
               console.error('Error al registrar:', error);
-              this.snackBar.open('Error al procesar la venta.', 'Cerrar', { duration: 3000 });
+              this.snackBar.open('Error al procesar la venta.', 'Cerrar', {
+                duration: 3000,
+              });
             });
         }
       });
-      
     });
+  }
+
+  loadSellerRating(userId: string) {
+    this.postService.getUserRatings(userId).subscribe((ratings) => {
+      this.totalReviews = ratings.length;
+      if (this.totalReviews > 0) {
+        const sum = ratings.reduce((acc, curr) => acc + curr.rating, 0);
+        this.averageRating = sum / this.totalReviews;
+      } else {
+        this.averageRating = 0;
+      }
+    });
+  }
+
+  getStarsArray(): number[] {
+    return [1, 2, 3, 4, 5];
+  }
+
+  onSeeReviews() {
+    this.router.navigate(['/perfil-publico', this.post.userId]);
   }
 }

@@ -256,49 +256,99 @@
 
   <mat-tab label="Mi reputación">
     <div class="transactions-container">
-      
       <div class="loading-state" *ngIf="isLoadingRatings">
         <mat-spinner diameter="40" color="primary"></mat-spinner>
       </div>
 
-      <div class="tab-content empty-state" *ngIf="!isLoadingRatings && ratings.length === 0">
+      <div
+        class="tab-content empty-state"
+        *ngIf="!isLoadingRatings && ratings.length === 0"
+      >
         <mat-icon class="empty-icon">star_border</mat-icon>
         <h3>Aún no tienes calificaciones</h3>
-        <p>Cuando otros usuarios te califiquen por tus compras o ventas, aparecerán aquí.</p>
+        <p>
+          Cuando otros usuarios te califiquen por tus compras o ventas,
+          aparecerán aquí.
+        </p>
       </div>
 
-      <div class="ratings-content" *ngIf="!isLoadingRatings && ratings.length > 0">
-        
+      <div
+        class="ratings-content"
+        *ngIf="!isLoadingRatings && ratings.length > 0"
+      >
         <div class="rating-summary">
-          <div class="average-score">{{ averageRating | number:'1.1-1' }}</div>
+          <div class="average-score">{{ averageRating | number: "1.1-1" }}</div>
           <div class="stars-display">
-            <mat-icon *ngFor="let star of getStarsArray(averageRating)" [class.filled]="star <= averageRating">
-              {{ star <= averageRating ? 'star' : (star - 0.5 <= averageRating ? 'star_half' : 'star_border') }}
-            </mat-icon>
+            <div class="app-star-rating lg">
+              <ng-container *ngFor="let star of getStarsArray(averageRating)">
+                <mat-icon *ngIf="star <= averageRating" class="filled"
+                  >star</mat-icon
+                >
+
+                <div
+                  class="half-star-container"
+                  *ngIf="star > averageRating && star - 1 < averageRating"
+                >
+                  <mat-icon class="star-background">star</mat-icon>
+                  <mat-icon class="star-foreground">star</mat-icon>
+                </div>
+
+                <mat-icon
+                  *ngIf="star > averageRating && star - 1 >= averageRating"
+                  >star_border</mat-icon
+                >
+              </ng-container>
+            </div>
           </div>
-          <div class="total-reviews">{{ ratings.length }} {{ ratings.length === 1 ? 'calificación' : 'calificaciones' }}</div>
+          <div class="total-reviews">
+            {{ ratings.length }}
+            {{ ratings.length === 1 ? "calificación" : "calificaciones" }}
+          </div>
         </div>
 
         <div class="transaction-list">
           <div class="rating-card" *ngFor="let review of ratings">
             <div class="rating-header">
-              <div class="stars-small">
-                <mat-icon *ngFor="let star of getStarsArray(review.rating)" [class.filled]="star <= review.rating">
-                  {{ star <= review.rating ? 'star' : 'star_border' }}
-                </mat-icon>
+              <div class="app-star-rating sm">
+                <ng-container *ngFor="let star of getStarsArray(review.rating)">
+                  <mat-icon *ngIf="star <= review.rating" class="filled"
+                    >star</mat-icon
+                  >
+
+                  <div
+                    class="half-star-container"
+                    *ngIf="star > review.rating && star - 1 < review.rating"
+                  >
+                    <mat-icon class="star-background">star</mat-icon>
+                    <mat-icon class="star-foreground">star</mat-icon>
+                  </div>
+
+                  <mat-icon
+                    *ngIf="star > review.rating && star - 1 >= review.rating"
+                    >star_border</mat-icon
+                  >
+                </ng-container>
               </div>
-              <span class="rating-date">{{ review.timestamp?.toDate() | date:'dd/MM/yyyy' }}</span>
+              <span class="rating-date">{{
+                review.timestamp?.toDate() | date: "dd/MM/yyyy"
+              }}</span>
             </div>
-            
-            <p class="rating-comment" *ngIf="review.comment">"{{ review.comment }}"</p>
-            <p class="rating-comment empty-comment" *ngIf="!review.comment">El usuario no dejó ningún comentario.</p>
-            
+
+            <p class="rating-comment" *ngIf="review.comment">
+              "{{ review.comment }}"
+            </p>
+            <p class="rating-comment empty-comment" *ngIf="!review.comment">
+              El usuario no dejó ningún comentario.
+            </p>
+
             <div class="rating-role">
-              Rol en la transacción: <strong>{{ review.role === 'buyer' ? 'Vendedor' : 'Comprador' }}</strong>
+              Rol en la transacción:
+              <strong>{{
+                review.role === "buyer" ? "Vendedor" : "Comprador"
+              }}</strong>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </mat-tab>

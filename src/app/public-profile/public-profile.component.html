@@ -1,0 +1,103 @@
+<div class="public-profile-container">
+  <div class="header-actions">
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2>Perfil Público</h2>
+    <div style="width: 40px"></div>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <mat-spinner diameter="40" color="primary"></mat-spinner>
+  </div>
+
+  <div class="profile-content" *ngIf="!isLoading && userData">
+    <div class="user-main-info">
+      <img
+        [src]="userData.photoURL || 'assets/images/user-placeholder.png'"
+        alt="Foto de perfil"
+      />
+      <h3>{{ userData.displayName || "Usuario" }}</h3>
+    </div>
+
+    <div class="rating-summary">
+      <div class="average-score">{{ averageRating | number: "1.1-1" }}</div>
+      <div class="stars-display">
+        <div class="app-star-rating lg">
+          <ng-container *ngFor="let star of getStarsArray(averageRating)">
+            <mat-icon *ngIf="star <= averageRating" class="filled"
+              >star</mat-icon
+            >
+
+            <div
+              class="half-star-container"
+              *ngIf="star > averageRating && star - 1 < averageRating"
+            >
+              <mat-icon class="star-background">star</mat-icon>
+              <mat-icon class="star-foreground">star</mat-icon>
+            </div>
+
+            <mat-icon *ngIf="star > averageRating && star - 1 >= averageRating"
+              >star_border</mat-icon
+            >
+          </ng-container>
+        </div>
+      </div>
+      <div class="total-reviews">
+        {{ ratings.length }}
+        {{ ratings.length === 1 ? "opinión" : "opiniones" }}
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="ratings.length === 0">
+      <mat-icon class="empty-icon">star_border</mat-icon>
+      <p>Este usuario aún no tiene calificaciones.</p>
+    </div>
+
+    <div class="reviews-list" *ngIf="ratings.length > 0">
+      <h4>Comentarios de otros usuarios</h4>
+
+      <div class="rating-card" *ngFor="let review of ratings">
+        <div class="rating-header">
+          <div class="app-star-rating sm">
+            <ng-container *ngFor="let star of getStarsArray(review.rating)">
+              <mat-icon *ngIf="star <= review.rating" class="filled"
+                >star</mat-icon
+              >
+
+              <div
+                class="half-star-container"
+                *ngIf="star > review.rating && star - 1 < review.rating"
+              >
+                <mat-icon class="star-background">star</mat-icon>
+                <mat-icon class="star-foreground">star</mat-icon>
+              </div>
+
+              <mat-icon
+                *ngIf="star > review.rating && star - 1 >= review.rating"
+                >star_border</mat-icon
+              >
+            </ng-container>
+          </div>
+          <span class="rating-date">{{
+            review.timestamp?.toDate() | date: "dd/MM/yyyy"
+          }}</span>
+        </div>
+
+        <p class="rating-comment" *ngIf="review.comment">
+          "{{ review.comment }}"
+        </p>
+        <p class="rating-comment empty-comment" *ngIf="!review.comment">
+          Sin comentario.
+        </p>
+
+        <div class="rating-role">
+          Actuó como:
+          <strong>{{
+            review.role === "buyer" ? "Vendedor" : "Comprador"
+          }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

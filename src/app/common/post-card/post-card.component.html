@@ -12,6 +12,39 @@
           ? post.authorProvince + ", " + post.authorCity
           : "Ubicación no disponible"
       }}</span>
+
+      <div class="user-rating" *ngIf="totalReviews > 0">
+        <div class="app-star-rating sm">
+          <ng-container *ngFor="let star of getStarsArray()">
+            <mat-icon *ngIf="star <= averageRating" class="filled"
+              >star</mat-icon
+            >
+
+            <div
+              class="half-star-container"
+              *ngIf="star > averageRating && star - 1 < averageRating"
+            >
+              <mat-icon class="star-background">star</mat-icon>
+              <mat-icon class="star-foreground">star</mat-icon>
+            </div>
+
+            <mat-icon *ngIf="star > averageRating && star - 1 >= averageRating"
+              >star_border</mat-icon
+            >
+          </ng-container>
+        </div>
+        <span class="rating-number">{{ averageRating | number: "1.1-1" }}</span>
+        <span class="reviews-link" (click)="onSeeReviews()"
+          >Ver opiniones ({{ totalReviews }})</span
+        >
+      </div>
+
+      <div class="user-rating no-rating" *ngIf="totalReviews === 0">
+        <span class="new-user-badge">Nuevo</span>
+        <span class="reviews-link" (click)="onSeeReviews()"
+          >Sin calificaciones</span
+        >
+      </div>
     </div>
   </div>
 

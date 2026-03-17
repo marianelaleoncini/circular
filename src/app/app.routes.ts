@@ -6,6 +6,7 @@ import { authGuard } from './auth/auth.guard';
 import { PostsComponent } from './posts/posts.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ChatComponent } from './chat/chat.component';
+import { PublicProfileComponent } from './public-profile/public-profile.component';
 
 export const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -14,6 +15,7 @@ export const routes: Routes = [
   { path: 'posts/:id', component: PostsComponent, canActivate: [authGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
   { path: 'chat', component: ChatComponent, canActivate: [authGuard] },
+  { path: 'perfil-publico/:id', component: PublicProfileComponent, canActivate: [authGuard] },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: '**', redirectTo: 'auth' },
   { path: '', redirectTo: '/home', pathMatch: 'full' },

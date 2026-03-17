@@ -235,4 +235,8 @@ export class AuthService {
       return profile;
     }
   }
+
+  getUserById(userId: string): Observable<any> {
+    return this.firestore.collection('users').doc(userId).valueChanges();
+  }
 }

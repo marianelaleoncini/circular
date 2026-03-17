@@ -268,3 +268,56 @@ button {
     flex: 0 0 25%;
   } /* 25% del ancho */
 }
+
+.app-star-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px; // Espaciado por defecto
+
+  // Estrella base (vacía o llena)
+  mat-icon {
+    color: #cfd8dc; // Gris por defecto
+    
+    &.filled {
+      color: #ffb300; // Amarillo/Dorado
+    }
+  }
+
+  // Contenedor especial para la media estrella
+  .half-star-container {
+    position: relative;
+    display: inline-flex;
+    
+    .star-background {
+      color: #cfd8dc !important; // Fondo gris
+    }
+    
+    .star-foreground {
+      position: absolute;
+      top: 0;
+      left: 0;
+      color: #ffb300 !important; // Frente amarillo
+      clip-path: inset(0 50% 0 0); // Recorta exactamente la mitad derecha
+    }
+  }
+
+  // --- TAMAÑOS REUTILIZABLES ---
+  
+  // Pequeñas (para las tarjetas del inicio)
+  &.sm {
+    gap: 2px;
+    mat-icon { font-size: 14px; width: 14px; height: 14px; }
+  }
+
+  // Medianas (para las listas de comentarios)
+  &.md {
+    gap: 2px;
+    mat-icon { font-size: 18px; width: 18px; height: 18px; }
+  }
+
+  // Grandes (para el promedio principal y el modal de calificar)
+  &.lg {
+    gap: 4px;
+    mat-icon { font-size: 32px; width: 32px; height: 32px; }
+  }
+}

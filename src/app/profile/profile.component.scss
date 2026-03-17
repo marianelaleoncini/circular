@@ -378,23 +378,6 @@
     margin-bottom: 8px;
   }
 
-  .stars-display {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 8px;
-
-    mat-icon {
-      font-size: 32px;
-      width: 32px;
-      height: 32px;
-      color: #cfd8dc;
-
-      &.filled {
-        color: #ffb300;
-      }
-    }
-  }
-
   .total-reviews {
     color: #666;
     font-size: 0.95rem;
@@ -416,22 +399,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-
-    .stars-small {
-      display: flex;
-      gap: 2px;
-
-      mat-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-        color: #cfd8dc;
-
-        &.filled {
-          color: #ffb300;
-        }
-      }
-    }
 
     .rating-date {
       font-size: 0.85rem;
