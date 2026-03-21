@@ -116,7 +116,6 @@ export class PostService {
     this.editModeSubject.next(value);
   }
 
-  // Cambiamos 'buyerId: string' por 'buyer: any'
   async registerTransaction(
     post: any,
     buyer: any,

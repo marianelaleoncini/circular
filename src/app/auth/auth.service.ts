@@ -12,7 +12,7 @@ export class AuthService {
   constructor(
     public afAuth: AngularFireAuth,
     private firestore: AngularFirestore,
-    private utilsService: UtilsService
+    private utilsService: UtilsService,
   ) {}
   currentUser: any;
 
@@ -116,8 +116,8 @@ export class AuthService {
           finalPhotoURL = await firstValueFrom(
             this.utilsService.uploadImageFromUrl(
               finalPhotoURL,
-              `avatars/${user.uid}.jpg`
-            )
+              `avatars/${user.uid}.jpg`,
+            ),
           );
         } catch (error) {
           console.error('Error migrando foto de Google al crear:', error);
@@ -141,14 +141,14 @@ export class AuthService {
     else {
       if (userData?.photoURL && this.isGoogleUrl(userData.photoURL)) {
         console.log(
-          'Detectada imagen de Google antigua. Migrando a Storage...'
+          'Detectada imagen de Google antigua. Migrando a Storage...',
         );
         try {
           const newPhotoURL = await firstValueFrom(
             this.utilsService.uploadImageFromUrl(
               userData.photoURL,
-              `avatars/${user.uid}.jpg`
-            )
+              `avatars/${user.uid}.jpg`,
+            ),
           );
 
           await userRef.update({ photoURL: newPhotoURL });
@@ -168,7 +168,7 @@ export class AuthService {
     displayName: string,
     photoURL: string,
     city: string,
-    province: string
+    province: string,
   ): Promise<void> {
     if (!this.currentUser) return;
     const safeData = {
@@ -213,8 +213,8 @@ export class AuthService {
           photoURL = await firstValueFrom(
             this.utilsService.uploadImageFromUrl(
               user.photoURL,
-              `avatar_${user.uid}.jpg`
-            )
+              `avatar_${user.uid}.jpg`,
+            ),
           );
         } catch (e) {
           console.error('Error subiendo imagen de Google', e);
@@ -238,5 +238,40 @@ export class AuthService {
 
   getUserById(userId: string): Observable<any> {
     return this.firestore.collection('users').doc(userId).valueChanges();
+  }
+
+  async reportUser(
+    reportedUserId: string,
+    reportedUserName: string,
+    reason: string,
+    details: string,
+  ): Promise<void> {
+    const reporter = this.currentUser;
+    if (!reporter) throw new Error('Usuario no autenticado');
+
+    // El formato del documento debe coincidir con lo que espera la extensión
+    const mailData = {
+      to: 'admincircular@gmail.com',
+      message: {
+        subject: `⚠️ NUEVA DENUNCIA: Usuario ${reportedUserName}`,
+        html: `
+          <h2 style="color: #d32f2f;">Se ha recibido un nuevo reporte de usuario</h2>
+          <hr>
+          <h3>Datos del Reportado:</h3>
+          <p><strong>Nombre:</strong> ${reportedUserName}</p>
+          <p><strong>ID:</strong> ${reportedUserId}</p>
+          <br>
+          <h3>Detalles de la Denuncia:</h3>
+          <p><strong>Motivo:</strong> ${reason}</p>
+          <p><strong>Comentarios:</strong> ${details}</p>
+          <hr>
+          <h3>Datos del Denunciante:</h3>
+          <p><strong>Nombre:</strong> ${reporter.displayName || 'Sin nombre'}</p>
+          <p><strong>Email:</strong> ${reporter.email}</p>
+          <p><strong>ID:</strong> ${reporter.uid}</p>
+        `,
+      },
+    };
+    await this.firestore.collection('mail').add(mailData);
   }
 }

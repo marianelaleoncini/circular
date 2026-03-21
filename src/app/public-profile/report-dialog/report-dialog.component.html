@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>Denunciar a {{ data.userName }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="reportForm" class="report-form">
+    <p class="description">
+      Ayudanos a mantener la comunidad segura. La información que nos envíes será revisada por nuestro equipo de soporte. Tu denuncia es anónima para este usuario.
+    </p>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Motivo de la denuncia</mat-label>
+      <mat-select formControlName="reason" required>
+        <mat-option *ngFor="let reason of reasons" [value]="reason">
+          {{ reason }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Más detalles</mat-label>
+      <textarea matInput formControlName="details" rows="4" required placeholder="Por favor, explicá qué sucedió..."></textarea>
+      <mat-hint align="end">{{ reportForm.get('details')?.value?.length || 0 }} / 500</mat-hint>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-raised-button color="warn" [disabled]="reportForm.invalid" (click)="submitReport()">
+    Enviar denuncia
+  </button>
+</mat-dialog-actions>

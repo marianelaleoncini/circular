@@ -4,7 +4,16 @@
       <mat-icon>arrow_back</mat-icon>
     </button>
     <h2>Perfil Público</h2>
-    <div style="width: 40px"></div>
+
+    <button mat-icon-button [matMenuTriggerFor]="profileMenu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #profileMenu="matMenu">
+      <button mat-menu-item (click)="openReportDialog()">
+        <mat-icon color="warn">report_problem</mat-icon>
+        <span style="color: #f44336">Denunciar usuario</span>
+      </button>
+    </mat-menu>
   </div>
 
   <div class="loading-state" *ngIf="isLoading">

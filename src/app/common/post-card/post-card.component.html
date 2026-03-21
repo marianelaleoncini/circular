@@ -13,7 +13,7 @@
           : "Ubicación no disponible"
       }}</span>
 
-      <div class="user-rating" *ngIf="totalReviews > 0">
+      <div class="user-rating" *ngIf="totalReviews > 0 && (use === 'home' || use === 'search-results')">
         <div class="app-star-rating sm">
           <ng-container *ngFor="let star of getStarsArray()">
             <mat-icon *ngIf="star <= averageRating" class="filled"

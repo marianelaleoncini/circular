@@ -1,0 +1,18 @@
+.report-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 300px;
+  margin-top: 8px;
+}
+
+.description {
+  color: #666;
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.full-width {
+  width: 100%;
+}
