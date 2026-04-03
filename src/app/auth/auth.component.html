@@ -79,6 +79,27 @@
           Las contraseñas deben coincidir.
         </mat-error>
       </mat-form-field>
+      <div *ngIf="!isLoginMode" class="terms-container">
+        <mat-checkbox formControlName="termsAccepted" color="primary">
+          Acepto los
+          <a href="/terminos" target="_blank" class="terms-link"
+            >Términos y Condiciones</a
+          >
+          y la
+          <a href="/politica-de-privacidad" target="_blank" class="terms-link"
+            >Política de Privacidad</a
+          >.
+        </mat-checkbox>
+        <mat-error
+          class="terms-error"
+          *ngIf="
+            registerForm.get('termsAccepted')?.hasError('required') &&
+            registerForm.get('termsAccepted')?.touched
+          "
+        >
+          Debes aceptar los términos para registrarte.
+        </mat-error>
+      </div>
       <mat-error class="error-message" *ngIf="errorMessage">
         {{ errorMessage }}
       </mat-error>
@@ -88,6 +109,7 @@
         color="primary"
         class="main-button"
         type="submit"
+        [disabled]="getForm().invalid"
       >
         {{ isLoginMode ? "Iniciar sesión" : "Registrarse" }}
       </button>

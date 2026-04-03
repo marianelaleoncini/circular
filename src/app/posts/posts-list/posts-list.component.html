@@ -4,7 +4,12 @@
   [use]="use"
 ></app-post-card>
 
-<div class="empty-state" *ngIf="postList.length === 0">
+<div class="empty-state" *ngIf="postList.length === 0 && !isLoading">
   <mat-icon>search_off</mat-icon>
   <p>No hay publicaciones.</p>
+</div>
+
+<div #scrollSentinel class="scroll-sentinel" *ngIf="use === 'search-results'">
+  <mat-spinner *ngIf="isLoading" diameter="40" color="primary"></mat-spinner>
+  <p *ngIf="!hasMore && postList.length > 0" class="no-more-posts">No hay más publicaciones para mostrar.</p>
 </div>

@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LoadingComponent } from '../common/loading/loading.component';
 import { Router } from '@angular/router';
@@ -26,6 +27,7 @@ import { Router } from '@angular/router';
     MatButtonModule,
     MatDividerModule,
     LoadingComponent,
+    MatCheckboxModule
   ],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss'],
@@ -44,7 +46,7 @@ export class AuthComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -68,6 +70,7 @@ export class AuthComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(6)]],
       displayName: ['', [Validators.required, Validators.minLength(5)]],
+      termsAccepted: [false, Validators.requiredTrue]
     });
 
     this.forgotForm = this.fb.group({
@@ -107,11 +110,13 @@ export class AuthComponent implements OnInit {
   // Manejar registro
   onRegister() {
     if (this.registerForm.invalid) return;
-    const { email, password, confirmPassword, displayName } = this.registerForm.value;
+    const { email, password, confirmPassword, displayName } =
+      this.registerForm.value;
     this.isLoading = true;
 
     if (password !== confirmPassword) {
-      console.error('Las contraseñas no coinciden');
+      this.errorMessage = 'Las contraseñas no coinciden';
+      this.isLoading = false;
       return;
     }
 
@@ -122,7 +127,10 @@ export class AuthComponent implements OnInit {
         this.isLoading = false;
       })
       .catch((error) => {
-        console.error('Error al registrar:', error);
+        console.log(error.code)
+        if (error.code === 'auth/email-already-in-use') {
+          this.errorMessage = 'El email ya se encuentra en uso. Intenta con otro.';
+        }
         this.isLoading = false;
       });
   }
@@ -134,12 +142,11 @@ export class AuthComponent implements OnInit {
     this.authService
       .loginWithGoogle()
       .then((result) => {
-        console.log('Usuario autenticado:', result.user);
         this.isLoading = false;
       })
       .catch((error) => {
-        console.error('Error al iniciar sesión:', error);
         this.isLoading = false;
+        this.snackBar.open(error.messae, 'Cerrar', { duration: 3000 });
       });
   }
 
@@ -157,7 +164,7 @@ export class AuthComponent implements OnInit {
       })
       .catch((err) => {
         this.isLoading = false;
-        this.snackBar.open(err.message, 'Cerrar', { duration: 3000 });
+        this.snackBar.open(err.messae, 'Cerrar', { duration: 3000 });
       });
   }
 

@@ -37,6 +37,37 @@
   margin-bottom: 1rem;
 }
 
+.terms-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+  text-align: left;
+  width: 100%;
+
+  mat-checkbox {
+    white-space: normal;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  .terms-link {
+    color: #326403;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .terms-error {
+    font-size: 0.75rem;
+    margin-top: 4px;
+    padding-left: 24px;
+  }
+}
+
 @media (min-width: 600px) {
   /* Estilos para pantallas más grandes (tabletas y escritorios) */
   .auth-container {

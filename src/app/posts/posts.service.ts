@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { BehaviorSubject, Observable, firstValueFrom, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
 import firebase from 'firebase/compat/app';
 
@@ -63,6 +63,53 @@ export class PostService {
                 return posts.filter((p) => p.userId !== user.uid);
               }
               return posts;
+            }),
+          );
+      }),
+    );
+  }
+
+getHomePostsPaginated(
+    batchSize: number,
+    lastDoc?: any,
+  ): Observable<{ posts: any[]; lastDoc: any; hasMore: boolean }> {
+    return this.authService.getCurrentUser().pipe(
+      take(1),
+      switchMap((user) => {
+        return this.firestore
+          .collection('posts', (ref) => {
+            let query: any = ref
+              .where('isActive', '==', true)
+              .orderBy('createdAt', 'desc')
+              .limit(batchSize);
+
+            if (lastDoc) {
+              query = query.startAfter(lastDoc);
+            }
+            return query;
+          })
+          .get()
+          .pipe(
+            map((snapshot) => {
+              const posts = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...(doc.data() as any),
+              }));
+
+              const filteredPosts = user
+                ? posts.filter((p) => p.userId !== user.uid)
+                : posts;
+
+              const newLastDoc =
+                snapshot.docs.length > 0
+                  ? snapshot.docs[snapshot.docs.length - 1]
+                  : null;
+
+              return {
+                posts: filteredPosts,
+                lastDoc: newLastDoc,
+                hasMore: snapshot.docs.length === batchSize,
+              };
             }),
           );
       }),

@@ -1,0 +1,107 @@
+.legal-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+  background-color: #ffffff;
+  min-height: 100vh;
+  box-sizing: border-box;
+
+  .header-actions {
+    margin-bottom: 24px;
+    margin-left: -12px; // Para alinear el botón con el texto
+  }
+
+  .legal-content {
+    color: #333333;
+    line-height: 1.6;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+
+    .last-updated {
+      color: #666666;
+      font-size: 0.9rem;
+      font-style: italic;
+      margin-bottom: 32px;
+    }
+
+    .intro {
+      font-size: 1.1rem;
+      margin-bottom: 24px;
+    }
+
+    section {
+      margin-bottom: 32px;
+
+      h2 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #2c3e50; // Ajustalo al color primario de tu app si querés
+        margin-bottom: 16px;
+        border-bottom: 1px solid #eeeeee;
+        padding-bottom: 8px;
+      }
+
+      p {
+        margin-bottom: 16px;
+      }
+
+      ul {
+        margin-bottom: 16px;
+        padding-left: 24px;
+
+        li {
+          margin-bottom: 8px;
+        }
+      }
+
+      .highlight {
+        background-color: #f8f9fa;
+        padding: 12px;
+        border-left: 4px solid #3f51b5; // Color primario
+        border-radius: 4px;
+      }
+
+      .legal-quote {
+        background-color: #f1f3f4;
+        padding: 16px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        color: #5f6368;
+        
+        p {
+          margin: 0;
+        }
+      }
+    }
+
+    .academic-note {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 2px dashed #cccccc;
+      color: #888888;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+  }
+}
+
+// Mobile Responsive
+@media (max-width: 600px) {
+  .legal-container {
+    padding: 16px;
+    
+    .legal-content {
+      h1 {
+        font-size: 1.5rem;
+      }
+      section h2 {
+        font-size: 1.2rem;
+      }
+    }
+  }
+}

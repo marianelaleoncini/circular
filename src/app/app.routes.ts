@@ -7,6 +7,8 @@ import { PostsComponent } from './posts/posts.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ChatComponent } from './chat/chat.component';
 import { PublicProfileComponent } from './public-profile/public-profile.component';
+import { TermsComponent } from './auth/terms/terms.component';
+import { PrivacyPolicyComponent } from './auth/privacy-policy/privacy-policy.component';
 
 export const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -17,6 +19,8 @@ export const routes: Routes = [
   { path: 'chat', component: ChatComponent, canActivate: [authGuard] },
   { path: 'perfil-publico/:id', component: PublicProfileComponent, canActivate: [authGuard] },
   { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'terminos', component: TermsComponent },
+  { path: 'politica-de-privacidad', component: PrivacyPolicyComponent },
   { path: '**', redirectTo: 'auth' },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
 ];
