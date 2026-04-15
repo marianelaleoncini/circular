@@ -1,7 +1,24 @@
-<div class="brand">
-  <img class="brand-img" src="assets/images/logo.png" alt="logo" height="30" />
-  <h1 class="brand-title">Circular</h1>
+<div class="mobile-header-wrapper">
+  <div class="brand">
+    <img
+      class="brand-img"
+      src="assets/images/logo.png"
+      alt="logo"
+      height="30"
+    />
+    <h1 class="brand-title">Circular</h1>
+  </div>
+
+  <button
+    mat-icon-button
+    routerLink="/faqs"
+    class="mobile-faq-btn"
+    aria-label="Preguntas Frecuentes"
+  >
+    <mat-icon>help_outline</mat-icon>
+  </button>
 </div>
+
 <div class="home-wrapper">
   <app-search-filter
     [provinces]="(provinces$ | async) || []"
@@ -9,16 +26,53 @@
   >
   </app-search-filter>
 
+  <section class="activity-section" *ngIf="!isLoading">
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <div class="stat-icon bg-green">
+          <mat-icon>shopping_bag</mat-icon>
+        </div>
+        <div class="stat-content">
+          <h3>{{ userStats.purchases }}</h3>
+          <p>Compras</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-icon bg-blue">
+          <mat-icon>storefront</mat-icon>
+        </div>
+        <div class="stat-content">
+          <h3>{{ userStats.sales }}</h3>
+          <p>Ventas</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-icon bg-orange">
+          <mat-icon>inventory_2</mat-icon>
+        </div>
+        <div class="stat-content">
+          <h3>{{ userStats.activePosts }}</h3>
+          <p>Publicaciones Activas</p>
+        </div>
+      </mat-card>
+    </div>
+  </section>
+
   <div class="loading-container" *ngIf="isLoading">
     <mat-spinner diameter="40"></mat-spinner>
   </div>
 
-  <div class="results-container" *ngIf="!isLoading">
+ <div class="results-container" *ngIf="!isLoading">
     <p class="count-text" *ngIf="filteredPosts.length !== allPosts.length">
       Encontramos {{ filteredPosts.length }} resultados
     </p>
 
-    <app-posts-list use="search-results" [externalPosts]="filteredPosts">
+    <app-posts-list 
+      use="search-results" 
+      [externalPosts]="filteredPosts"
+      [isFiltering]="isFiltering">
     </app-posts-list>
   </div>
 </div>

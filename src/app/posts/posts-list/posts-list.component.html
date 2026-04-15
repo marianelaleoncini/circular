@@ -1,5 +1,5 @@
 <app-post-card
-  *ngFor="let post of postList"
+  *ngFor="let post of postList; trackBy: trackById"
   [post]="post"
   [use]="use"
 ></app-post-card>

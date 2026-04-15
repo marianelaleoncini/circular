@@ -1,0 +1,281 @@
+<mat-toolbar class="admin-header">
+  <div class="brand-container">
+    <img src="assets/images/logo.png" alt="Logo Circular" class="brand-logo" />
+    <span class="brand-text">Circular</span>
+    <span class="admin-subtitle">- Panel de Administración</span>
+  </div>
+
+  <span class="spacer"></span>
+
+  <button mat-button class="logout-btn" (click)="onLogout()">
+    <mat-icon>logout</mat-icon> <span class="logout-text">Cerrar Sesión</span>
+  </button>
+</mat-toolbar>
+
+<div class="admin-container">
+  <mat-card class="filter-card">
+    <mat-form-field appearance="outline" class="date-filter-field">
+      <mat-label>Filtrar por Fecha</mat-label>
+
+      <mat-date-range-input [formGroup]="dateRange" [rangePicker]="picker">
+        <input matStartDate formControlName="start" placeholder="Inicio" />
+        <input matEndDate formControlName="end" placeholder="Fin" />
+      </mat-date-range-input>
+
+      <button
+        mat-icon-button
+        matIconSuffix
+        *ngIf="dateRange.value.start || dateRange.value.end"
+        (click)="clearDates($event)"
+        aria-label="Limpiar fechas"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="picker"
+      ></mat-datepicker-toggle>
+
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
+  </mat-card>
+
+  <div class="metrics-grid">
+    <mat-card class="metric-card">
+      <div class="icon-wrapper bg-blue">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+      <div class="metric-info">
+        <h3>
+          {{ displayMetrics.usersTotal }}
+          <span class="sub-metric"
+            >({{ metrics.users.bannedPct | number: "1.0-1" }}% Bloqueados)</span
+          >
+        </h3>
+        <p>Usuarios Totales</p>
+      </div>
+    </mat-card>
+
+    <mat-card class="metric-card">
+      <div class="icon-wrapper bg-purple">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+          <path
+            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+          ></path>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+      </div>
+      <div class="metric-info">
+        <h3>
+          {{ displayMetrics.postsTotal }}
+          <span class="sub-metric"
+            >Activas: {{ metrics.posts.activePct | number: "1.0-0" }}% |
+            Inactivas: {{ metrics.posts.inactivePct | number: "1.0-0" }}%</span
+          >
+        </h3>
+        <p>Publicaciones</p>
+      </div>
+    </mat-card>
+
+    <mat-card class="metric-card">
+      <div class="icon-wrapper bg-green">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <polyline points="16 11 18 13 22 9"></polyline>
+        </svg>
+      </div>
+      <div class="metric-info">
+        <h3>
+          {{ displayMetrics.transTotal }}
+          <span class="sub-metric"
+            >({{ metrics.ratings.pct | number: "1.0-1" }}% Valoradas)</span
+          >
+        </h3>
+        <p>Transacciones</p>
+      </div>
+    </mat-card>
+
+    <mat-card class="metric-card">
+      <div class="icon-wrapper bg-orange">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
+          ></path>
+        </svg>
+      </div>
+      <div class="metric-info">
+        <h3>{{ displayMetrics.chatsTotal }}</h3>
+        <p>Chats Generados</p>
+      </div>
+    </mat-card>
+  </div>
+
+  <div class="charts-grid">
+    <mat-card class="chart-card">
+      <mat-card-header
+        ><mat-card-title>Categorías</mat-card-title></mat-card-header
+      >
+      <div class="chart-wrapper">
+        <canvas
+          *ngIf="pieChartData.labels?.length; else emptyPie"
+          canvasLib
+          baseChart
+          [data]="pieChartData"
+          [options]="pieChartOptions"
+          [type]="pieChartType"
+        >
+        </canvas>
+
+        <ng-template #emptyPie>
+          <div class="empty-state">
+            <p>No hay publicaciones en este período</p>
+          </div>
+        </ng-template>
+      </div>
+    </mat-card>
+
+    <mat-card class="chart-card">
+      <mat-card-header
+        ><mat-card-title>Provincias</mat-card-title></mat-card-header
+      >
+      <div class="chart-wrapper">
+        <canvas
+          *ngIf="barChartData.labels?.length; else emptyBar"
+          canvasLib
+          baseChart
+          [data]="barChartData"
+          [options]="barChartOptions"
+          [type]="barChartType"
+        >
+        </canvas>
+
+        <ng-template #emptyBar>
+          <div class="empty-state">
+            <p>No hay publicaciones en este período</p>
+          </div>
+        </ng-template>
+      </div>
+    </mat-card>
+  </div>
+
+  <mat-card class="table-card">
+    <mat-card-header class="custom-table-header">
+      <mat-card-title>Gestión de Usuarios</mat-card-title>
+
+      <mat-form-field class="search-field">
+        <mat-label>Buscar por nombre, email o ID...</mat-label>
+        <input
+          matInput
+          (keyup)="onSearchChange($event)"
+          placeholder="Ej: Facundo o 8yX1..."
+          #input
+        />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </mat-card-header>
+
+    <div class="table-container">
+      <table
+        mat-table
+        [dataSource]="filteredUsersTable"
+        class="full-width responsive-table"
+      >
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>ID Usuario</th>
+          <td mat-cell *matCellDef="let user" data-label="ID">
+            <code class="uid-text">{{ user.id }}</code>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let user" data-label="Nombre">
+            {{ user.displayName }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let user" data-label="Email">
+            {{ user.email }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="location">
+          <th mat-header-cell *matHeaderCellDef>Ubicación</th>
+          <td mat-cell *matCellDef="let user" data-label="Ubicación">
+            {{
+              user.city && user.province
+                ? user.city + ", " + user.province
+                : user.city || user.province || "-"
+            }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let user" data-label="Estado">
+            <mat-slide-toggle
+              color="primary"
+              [checked]="user.isEnabled !== false"
+              (change)="toggleStatus(user)"
+            >
+              {{ user.isEnabled !== false ? "Activo" : "Bloqueado" }}
+            </mat-slide-toggle>
+          </td>
+        </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns; sticky: true"
+        ></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+      <div class="no-results" *ngIf="filteredUsersTable.length === 0">
+        No se encontraron usuarios que coincidan con "{{ searchTerm }}"
+      </div>
+    </div>
+  </mat-card>
+</div>

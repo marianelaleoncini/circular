@@ -1,0 +1,26 @@
+<mat-toolbar>
+  <button mat-icon-button aria-label="arrow back" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>Preguntas Frecuentes</span>
+</mat-toolbar>
+
+<div class="faq-page-container">
+  
+  <p class="subtitle">Todo lo que necesitás saber sobre la comunidad Circular.</p>
+  
+  <mat-accordion class="custom-accordion">
+    <mat-expansion-panel *ngFor="let faq of faqs; let first = first" [expanded]="first">
+      
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ faq.question }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      
+      <p class="faq-answer">{{ faq.answer }}</p>
+      
+    </mat-expansion-panel>
+  </mat-accordion>
+
+</div>

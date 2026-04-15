@@ -40,7 +40,6 @@ export class PostService {
       authorPhoto: userData?.photoURL || user.photoURL,
       authorProvince: userData?.province || null,
       authorCity: userData?.city || null,
-      isActive: true,
       createdAt: new Date(),
     };
 

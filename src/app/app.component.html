@@ -1,5 +1,5 @@
 <div class="circular-container">
-  <app-navigation *ngIf="isAuthenticated" class="navigation"></app-navigation>
+  <app-navigation *ngIf="isAuthenticated && !isAdmin" class="navigation"></app-navigation>
   <div [class]="isAuthenticated ? 'content' : 'content-full'">
     <router-outlet></router-outlet>
   </div>

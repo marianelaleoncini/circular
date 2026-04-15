@@ -15,6 +15,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LoadingComponent } from '../common/loading/loading.component';
 import { Router } from '@angular/router';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-auth',
@@ -27,7 +28,7 @@ import { Router } from '@angular/router';
     MatButtonModule,
     MatDividerModule,
     LoadingComponent,
-    MatCheckboxModule
+    MatCheckboxModule,
   ],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss'],
@@ -50,11 +51,26 @@ export class AuthComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.authService.getCurrentUser().subscribe((user) => {
-      if (user) {
-        this.router.navigate(['/home']); // Redirige al Home si ya está autenticado
-      }
-    });
+    this.authService
+      .getCurrentUser()
+      .pipe(take(1))
+      .subscribe(async (user) => {
+        if (user) {
+          const isBanned = await this.authService.isUserBanned(user.uid);
+          if (isBanned) {
+            await this.authService.logout();
+            this.errorMessage =
+              'Tu cuenta ha sido deshabilitada por violar las políticas de Circular.';
+            return;
+          }
+
+          if (this.authService.checkIfAdmin(user.email)) {
+            this.router.navigate(['/admin-dashboard']);
+          } else {
+            this.router.navigate(['/home']);
+          }
+        }
+      });
     this.initForms();
   }
 
@@ -70,7 +86,7 @@ export class AuthComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(6)]],
       displayName: ['', [Validators.required, Validators.minLength(5)]],
-      termsAccepted: [false, Validators.requiredTrue]
+      termsAccepted: [false, Validators.requiredTrue],
     });
 
     this.forgotForm = this.fb.group({
@@ -95,9 +111,25 @@ export class AuthComponent implements OnInit {
 
     this.authService
       .loginWithEmail(email, password)
-      .then((result) => {
-        console.log('Usuario autenticado:', result.user);
-        this.isLoading = false;
+      .then(async (result) => {
+        if (result.user) {
+          const isBanned = await this.authService.isUserBanned(result.user.uid);
+
+          if (isBanned) {
+            await this.authService.logout();
+            this.isLoading = false;
+            this.errorMessage =
+              'Tu cuenta ha sido deshabilitada por violar las políticas de Circular.';
+            return;
+          }
+
+          const userEmail = result.user?.email;
+          if (this.authService.checkIfAdmin(userEmail)) {
+            this.router.navigate(['/admin-dashboard']);
+          } else {
+            this.router.navigate(['/home']);
+          }
+        }
       })
       .catch((error) => {
         if (error.code === 'auth/invalid-credential') {
@@ -122,14 +154,13 @@ export class AuthComponent implements OnInit {
 
     this.authService
       .registerWithEmail(email, password, displayName)
-      .then((result) => {
-        console.log('Usuario registrado:', result.user);
-        this.isLoading = false;
+      .then(() => {
+        this.router.navigate(['/home']);
       })
       .catch((error) => {
-        console.log(error.code)
         if (error.code === 'auth/email-already-in-use') {
-          this.errorMessage = 'El email ya se encuentra en uso. Intenta con otro.';
+          this.errorMessage =
+            'El email ya se encuentra en uso. Intenta con otro.';
         }
         this.isLoading = false;
       });
@@ -141,12 +172,29 @@ export class AuthComponent implements OnInit {
 
     this.authService
       .loginWithGoogle()
-      .then((result) => {
-        this.isLoading = false;
+      .then(async (result) => {
+        if (result.user) {
+          const isBanned = await this.authService.isUserBanned(result.user.uid);
+
+          if (isBanned) {
+            await this.authService.logout();
+            this.isLoading = false;
+            this.errorMessage =
+              'Tu cuenta ha sido deshabilitada por violar las políticas de Circular.';
+            return;
+          }
+
+          const userEmail = result.user?.email;
+          if (this.authService.checkIfAdmin(userEmail)) {
+            this.router.navigate(['/admin-dashboard']);
+          } else {
+            this.router.navigate(['/home']);
+          }
+        }
       })
       .catch((error) => {
         this.isLoading = false;
-        this.snackBar.open(error.messae, 'Cerrar', { duration: 3000 });
+        this.snackBar.open(error.message, 'Cerrar', { duration: 3000 });
       });
   }
 
@@ -168,9 +216,12 @@ export class AuthComponent implements OnInit {
       });
   }
 
-  // Alternar entre login y registro
   toggleMode() {
     this.isLoginMode = !this.isLoginMode;
+    this.errorMessage = '';
+
+    if (this.loginForm) this.loginForm.reset();
+    if (this.registerForm) this.registerForm.reset();
   }
 
   backToLogin() {

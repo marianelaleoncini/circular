@@ -12,43 +12,42 @@
       </div>
     </a>
 
-    <a
-      mat-button
-      class="nav-item"
-      routerLink="/posts"
-      routerLinkActive="active"
-    >
+    <a mat-button class="nav-item" routerLink="/posts" routerLinkActive="active">
       <div class="content-wrapper">
-        <mat-icon>description</mat-icon>
+        <mat-icon>inventory_2</mat-icon>
         <span class="label">Publicaciones</span>
       </div>
     </a>
+
     <a mat-button class="nav-item" routerLink="/chat" routerLinkActive="active">
       <div class="content-wrapper">
         <div class="icon-badge-container">
           <mat-icon>chat</mat-icon>
-
           <ng-container *ngIf="totalUnread$ | async as count">
             <span class="nav-badge" *ngIf="count > 0">
               {{ count > 9 ? "+9" : count }}
             </span>
           </ng-container>
         </div>
-
         <span class="label">Chat</span>
       </div>
     </a>
 
-    <a
-      mat-button
-      class="nav-item"
-      routerLink="/profile"
-      routerLinkActive="active"
-    >
+    <a mat-button class="nav-item" routerLink="/profile" routerLinkActive="active">
       <div class="content-wrapper">
         <mat-icon>person</mat-icon>
         <span class="label">Perfil</span>
       </div>
     </a>
+
+    <div class="faq-divider desktop-only"></div>
+
+    <a mat-button class="nav-item faq-item desktop-only" routerLink="/faqs" routerLinkActive="active">
+      <div class="content-wrapper">
+        <mat-icon>help_outline</mat-icon>
+        <span class="label">Preguntas Frecuentes</span>
+      </div>
+    </a>
+
   </div>
 </nav>

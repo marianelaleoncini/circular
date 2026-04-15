@@ -2,21 +2,58 @@
   max-width: 1000px;
   min-height: 100vh;
   background-color: #fafafa;
+  margin: 0 auto;
 }
 
-.brand {
+/* =========================================
+   HEADER MOBILE (Logo centrado + Icono FAQ)
+   ========================================= */
+.mobile-header-wrapper {
+  position: relative; /* Clave para el posicionamiento del botón */
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   margin: 14px 0;
 
-  .brand-img {
-    margin-right: 8px;
-  }
-  .brand-title {
-    font-size: 24px;
+  .brand {
+    display: flex;
+    align-items: center;
     margin: 0;
-    color: #333;
+
+    .brand-img {
+      margin-right: 8px;
+    }
+    .brand-title {
+      font-size: 24px;
+      margin: 0;
+      color: #333;
+    }
+  }
+
+  .mobile-faq-btn {
+    position: absolute;
+    right: 4px;
+    color: #555;
+
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    mat-icon {
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+      line-height: 22px;
+
+      font-variation-settings:
+        "wght" 300,
+        "opsz" 22;
+      font-weight: 300;
+    }
   }
 }
 
@@ -56,14 +93,150 @@
   }
 }
 
+.activity-section {
+  padding: 1rem;
+
+  .section-title {
+    font-size: 1.15rem;
+    color: #1b5e20;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    margin-left: 4px;
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+
+  .stat-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 1.2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    .stat-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 1rem;
+      flex-shrink: 0;
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+
+      &.bg-green {
+        background: rgba(27, 94, 32, 0.1);
+        color: #1b5e20;
+      }
+      &.bg-blue {
+        background: rgba(33, 150, 243, 0.1);
+        color: #2196f3;
+      }
+      &.bg-orange {
+        background: rgba(255, 152, 0, 0.1);
+        color: #ff9800;
+      }
+    }
+
+    .stat-content {
+      h3 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: #333;
+        line-height: 1.2;
+      }
+      p {
+        margin: 0;
+        color: #777;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
 @media (min-width: 600px) {
-  .brand {
+  /* Ocultamos el header de mobile en pantallas grandes */
+  .mobile-header-wrapper {
     display: none;
   }
-  .results-container {
-    padding: 2rem;
+  .results-container,
+  .activity-section {
+    padding: 2rem 12px;
   }
   .home-wrapper {
     padding: 0 12px;
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .activity-section {
+    padding: 1rem 0.5rem;
+  }
+
+  /* =========================================
+     ESTADÍSTICAS MOBILE (Flexbox para que entren las 3)
+     ========================================= */
+  .stats-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    width: 100% !important;
+
+    .stat-card {
+      flex: 1 1 0 !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      padding: 10px 4px !important;
+      border-radius: 8px !important;
+      box-sizing: border-box !important;
+
+      .stat-icon {
+        margin: 0 auto 6px auto !important;
+        width: 32px !important;
+        height: 32px !important;
+
+        mat-icon {
+          font-size: 18px !important;
+          width: 18px !important;
+          height: 18px !important;
+        }
+      }
+
+      .stat-content {
+        width: 100% !important;
+        min-width: 0 !important;
+        text-align: center !important;
+
+        h3 {
+          font-size: 1.1rem !important;
+          margin-bottom: 2px !important;
+          line-height: 1.1 !important;
+        }
+        p {
+          font-size: 0.65rem !important;
+          letter-spacing: -0.3px !important;
+          line-height: 1 !important;
+          margin: 0 !important;
+          white-space: nowrap !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+        }
+      }
+    }
   }
 }

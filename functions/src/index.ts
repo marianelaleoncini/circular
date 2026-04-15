@@ -1,14 +1,9 @@
-import {onDocumentUpdated} from "firebase-functions/v2/firestore";
-import {setGlobalOptions} from "firebase-functions/v2";
+import { onDocumentUpdated } from "firebase-functions/v2/firestore";
 import * as admin from "firebase-admin";
 
-// Inicializamos la app solo si no existe ya (buena práctica)
 if (admin.apps.length === 0) {
   admin.initializeApp();
 }
-
-setGlobalOptions({region: "southamerica-east1"});
-
 
 export const syncUserPosts = onDocumentUpdated(
   {
@@ -16,66 +11,56 @@ export const syncUserPosts = onDocumentUpdated(
     memory: "512MiB",
     timeoutSeconds: 60,
     maxInstances: 10,
-    region: "us-central1",
+    region: "southamerica-east1", // <--- LA REGIÓN ESTÁ ACÁ ADENTRO AHORA
   },
   async (event) => {
     const userId = event.params.userId;
     const before = event.data?.before.data();
     const after = event.data?.after.data();
 
-    // LOG CRÍTICO 1: Ver qué llega realmente
-    console.log("🔥 FUNCTION TRIGGERED for:", userId);
-    console.log("BEFORE data:", JSON.stringify(before));
-    console.log("AFTER data:", JSON.stringify(after));
-
     if (!before || !after) return;
 
-    // LOG CRÍTICO 2: Ver por qué falla la comparación
     const changes = {
       nameChanged: before.displayName !== after.displayName,
       photoChanged: before.photoURL !== after.photoURL,
       cityChanged: before.city !== after.city,
       provinceChanged: before.province !== after.province,
     };
-    console.log("🔍 Detected changes:", changes);
 
-    if (!Object.values(changes).some(Boolean)) {
-      console.log("❌ No relevant changes detected. Exiting.");
-      return;
-    }
+    if (!Object.values(changes).some(Boolean)) return;
 
     try {
-      // LOG CRÍTICO 3: Verificar la query
-      console.log(`Searching posts where 'userId' == '${userId}'`);
       const postsSnap = await admin
         .firestore()
         .collection("posts")
-        .where("userId", "==", userId) // <--- OJO AQUÍ
+        .where("userId", "==", userId)
         .get();
 
-      console.log(`Found ${postsSnap.size} posts to update.`);
+      if (postsSnap.empty) return;
 
-      if (postsSnap.empty) {
-        console.log(
-          "User has no posts or 'userId' field in posts does not match."
-        );
-        return;
+      const updateData: any = {};
+      
+      if (changes.nameChanged) updateData.authorName = after.displayName ?? null;
+      if (changes.photoChanged) updateData.authorPhoto = after.photoURL ?? null;
+      
+      if (changes.cityChanged) {
+        updateData.authorCity = after.city ?? null;
+        updateData.city = after.city ?? null; 
+      }
+      
+      if (changes.provinceChanged) {
+        updateData.authorProvince = after.province ?? null;
+        updateData.province = after.province ?? null;
       }
 
       const batch = admin.firestore().batch();
       postsSnap.docs.forEach((doc) => {
-        // Log para ver qué doc se está actualizando
-        console.log(`Queueing update for post ${doc.id}`);
-        batch.update(doc.ref, {
-          authorName: after.displayName ?? null,
-          authorPhoto: after.photoURL ?? null,
-          authorCity: after.city ?? null,
-          authorProvince: after.province ?? null,
-        });
+        batch.update(doc.ref, updateData);
       });
 
       await batch.commit();
-      console.log("✅ Update successful!");
+      console.log(`✅ Posts sincronizados con éxito para el usuario ${userId}`);
+      
     } catch (error) {
       console.error("🔥 Error syncing posts:", error);
     }

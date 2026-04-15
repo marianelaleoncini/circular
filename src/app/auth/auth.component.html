@@ -6,7 +6,7 @@
     height="180px"
   />
   <ng-container *ngIf="!isForgotPassword">
-    <h1>Inicia sesión en Circular</h1>
+    <h1>{{ isLoginMode ? 'Inicia sesión en Circular' : 'Regístrate en Circular' }}</h1>
     <button mat-raised-button color="primary" (click)="onLoginWithGoogle()">
       Continuar con Google
     </button>

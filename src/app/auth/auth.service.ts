@@ -15,6 +15,7 @@ export class AuthService {
     private utilsService: UtilsService,
   ) {}
   currentUser: any;
+  private readonly ADMIN_EMAIL = 'admincircularapp@gmail.com';
 
   setCurrentUser(user: any): void {
     this.currentUser = user;
@@ -251,7 +252,7 @@ export class AuthService {
 
     // El formato del documento debe coincidir con lo que espera la extensión
     const mailData = {
-      to: 'admincircular@gmail.com',
+      to: 'admincircularapp@gmail.com',
       message: {
         subject: `⚠️ NUEVA DENUNCIA: Usuario ${reportedUserName}`,
         html: `
@@ -273,5 +274,18 @@ export class AuthService {
       },
     };
     await this.firestore.collection('mail').add(mailData);
+  }
+
+  checkIfAdmin(email: string | null | undefined): boolean {
+    return email === this.ADMIN_EMAIL;
+  }
+
+  async isUserBanned(uid: string): Promise<boolean> {
+    const userDoc = await firstValueFrom(this.firestore.collection('users').doc(uid).get());
+    if (userDoc.exists) {
+      const userData: any = userDoc.data();
+      return userData.isEnabled === false; 
+    }
+    return false;
   }
 }

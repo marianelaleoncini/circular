@@ -1,14 +1,14 @@
 import { UtilsService } from './../../common/services/utils.service';
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, Input, SimpleChanges, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
+  FormGroupDirective,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { PostService } from '../posts.service';
-import { AuthService } from '../../auth/auth.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -56,16 +56,15 @@ export class PostComponent {
   postId: string = '';
   editMode: boolean = false;
   @Input() shouldResetForm = false;
+  @ViewChild(FormGroupDirective) formDirective!: FormGroupDirective;
 
   constructor(
     private fb: FormBuilder,
     private postService: PostService,
-    private authService: AuthService,
     private snackBar: MatSnackBar,
-    private router: Router,
     private route: ActivatedRoute,
     private postsService: PostService,
-    private utilsService: UtilsService
+    private utilsService: UtilsService,
   ) {
     this.postForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(50)]],
@@ -73,6 +72,7 @@ export class PostComponent {
       price: ['', [Validators.required, Validators.min(0)]],
       category: ['', Validators.required],
       isActive: [true],
+      imageUrl: [null, Validators.required],
     });
 
     this.route.paramMap.subscribe((params) => {
@@ -102,7 +102,11 @@ export class PostComponent {
   }
 
   resetForm() {
-    this.postForm.reset();
+    if (this.formDirective) {
+      this.formDirective.resetForm();
+    }
+
+    this.postForm.reset({ isActive: true });
     this.imageUrl = null;
   }
 
@@ -121,20 +125,33 @@ export class PostComponent {
       this.uploadingImage = true;
       this.utilsService.uploadImage(file).subscribe((url) => {
         this.imageUrl = url;
+        this.postForm.patchValue({ imageUrl: url });
         this.uploadingImage = false;
       });
     }
   }
 
   onSubmit(): void {
-    if (!this.postForm.valid) return;
+    if (this.postForm.invalid) {
+      if (!this.postForm.get('imageUrl')?.value) {
+        this.snackBar.open(
+          'Es obligatorio subir una foto para la publicación.',
+          'Entendido',
+          { duration: 4000 },
+        );
+      } else {
+        this.snackBar.open(
+          'Por favor, completá todos los campos correctamente.',
+          'Entendido',
+          { duration: 4000 },
+        );
+      }
+      return;
+    }
 
     this.isLoading = true;
 
-    const postData = {
-      ...this.postForm.value,
-      imageUrl: this.imageUrl,
-    };
+    const postData = this.postForm.value;
 
     if (this.postId) {
       this.postService
@@ -150,6 +167,11 @@ export class PostComponent {
   private onSuccess(message: string): void {
     this.isLoading = false;
     this.snackBar.open(message, 'Cerrar', { duration: 4000 });
-    this.router.navigate(['/home']);
+    if (this.postForm.value.isActive) {
+      this.postService.setSelectedTab(1);
+    } else {
+      this.postService.setSelectedTab(2);
+    }
+    this.resetForm();
   }
 }
