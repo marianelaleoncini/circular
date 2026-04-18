@@ -11,7 +11,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { AuthService } from '../auth/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -41,37 +41,17 @@ export class HomeComponent implements OnInit {
     private postService: PostService,
     private locationService: LocationService,
     private authService: AuthService,
+    private router: Router
   ) {
     this.provinces$ = this.locationService.getProvinces();
   }
 
-  // --- Variables para Estadísticas ---
   userStats = {
     sales: 0,
     purchases: 0,
     activePosts: 0,
   };
   private subs: Subscription = new Subscription();
-
-  // --- Variables para FAQs ---
-  // Acá podés reemplazar estos textos por los que armaron en el documento
-  faqs = [
-    {
-      question: '¿Cómo coordino la entrega de un producto?',
-      answer:
-        'Una vez que inicies un chat con el vendedor, podrán acordar un punto de encuentro seguro o coordinar el envío.',
-    },
-    {
-      question: '¿Qué pasa si el producto no es lo que esperaba?',
-      answer:
-        'Circular cuenta con un sistema de calificación. Te recomendamos revisar la reputación del vendedor antes de concretar y calificar tu experiencia al finalizar.',
-    },
-    {
-      question: '¿Tiene algún costo publicar?',
-      answer:
-        'No, publicar en Circular es totalmente gratuito para fomentar la economía circular y la reutilización de materiales.',
-    },
-  ];
 
   ngOnInit() {
     this.loadUserStats();
@@ -94,14 +74,12 @@ export class HomeComponent implements OnInit {
     this.subs.add(
       this.authService.getCurrentUser().subscribe((user) => {
         if (user) {
-          // 1. Buscamos sus ventas
           this.subs.add(
             this.postService.getUserSales(user.uid).subscribe((sales) => {
               this.userStats.sales = sales.length;
             }),
           );
 
-          // 2. Buscamos sus compras
           this.subs.add(
             this.postService
               .getUserPurchases(user.uid)
@@ -110,7 +88,6 @@ export class HomeComponent implements OnInit {
               }),
           );
 
-          // 3. Buscamos sus publicaciones activas
           this.subs.add(
             this.postService.getActivePosts().subscribe((posts) => {
               this.userStats.activePosts = posts.length;
@@ -124,7 +101,6 @@ export class HomeComponent implements OnInit {
   onFilterChange(filters: any) {
     if (!this.allPosts.length) return;
 
-    // NUEVO: Detectamos si el usuario tiene al menos un filtro activo
     this.isFiltering = !!(
       filters.search ||
       filters.province ||
@@ -157,5 +133,18 @@ export class HomeComponent implements OnInit {
         matchesMaxPrice
       );
     });
+  }
+
+  goToPurchases() {
+    this.router.navigate(['/profile'], { queryParams: { tab: 'compras' } });
+  }
+
+  goToSales() {
+    this.router.navigate(['/profile'], { queryParams: { tab: 'ventas' } });
+  }
+
+  goToActivePosts() {
+    this.postService.setSelectedTab(1);
+    this.router.navigate(['/posts']);
   }
 }

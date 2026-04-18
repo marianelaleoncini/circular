@@ -71,7 +71,8 @@ export class PostCardComponent {
   onMarkAsSold(post: any) {
     this.chatService.getPotentialBuyers().subscribe((buyers) => {
       const dialogRef = this.dialog.open(RegisterSaleDialogComponent, {
-        width: '400px',
+        width: '95vw',
+        maxWidth: '400px',
         data: {
           originalPrice: post.price,
           potentialBuyers: buyers,

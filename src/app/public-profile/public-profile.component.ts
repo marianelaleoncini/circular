@@ -19,7 +19,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatIconModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    MatMenuModule
+    MatMenuModule,
   ],
   templateUrl: './public-profile.component.html',
   styleUrls: ['./public-profile.component.scss'],
@@ -84,7 +84,8 @@ export class PublicProfileComponent implements OnInit {
 
   openReportDialog() {
     const dialogRef = this.dialog.open(ReportDialogComponent, {
-      width: '400px',
+      width: '95vw',
+      maxWidth: '400px',
       data: {
         userName: this.userData.displayName || 'Usuario',
         userId: this.userId,

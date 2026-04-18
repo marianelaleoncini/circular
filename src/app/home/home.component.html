@@ -28,7 +28,7 @@
 
   <section class="activity-section" *ngIf="!isLoading">
     <div class="stats-grid">
-      <mat-card class="stat-card">
+      <mat-card class="stat-card clickable-card" (click)="goToPurchases()">
         <div class="stat-icon bg-green">
           <mat-icon>shopping_bag</mat-icon>
         </div>
@@ -38,7 +38,7 @@
         </div>
       </mat-card>
 
-      <mat-card class="stat-card">
+      <mat-card class="stat-card clickable-card" (click)="goToSales()">
         <div class="stat-icon bg-blue">
           <mat-icon>storefront</mat-icon>
         </div>
@@ -48,7 +48,7 @@
         </div>
       </mat-card>
 
-      <mat-card class="stat-card">
+      <mat-card class="stat-card clickable-card" (click)="goToActivePosts()">
         <div class="stat-icon bg-orange">
           <mat-icon>inventory_2</mat-icon>
         </div>
@@ -64,15 +64,16 @@
     <mat-spinner diameter="40"></mat-spinner>
   </div>
 
- <div class="results-container" *ngIf="!isLoading">
+  <div class="results-container" *ngIf="!isLoading">
     <p class="count-text" *ngIf="filteredPosts.length !== allPosts.length">
       Encontramos {{ filteredPosts.length }} resultados
     </p>
 
-    <app-posts-list 
-      use="search-results" 
+    <app-posts-list
+      use="search-results"
       [externalPosts]="filteredPosts"
-      [isFiltering]="isFiltering">
+      [isFiltering]="isFiltering"
+    >
     </app-posts-list>
   </div>
 </div>

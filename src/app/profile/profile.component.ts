@@ -18,7 +18,7 @@ import { CommonModule } from '@angular/common';
 import { LocationService } from '../common/services/location.service';
 import { UtilsService } from '../common/services/utils.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PostService } from '../posts/posts.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -60,6 +60,7 @@ export class ProfileComponent implements OnInit {
   ratings: any[] = [];
   averageRating: number = 0;
   isLoadingRatings = true;
+  selectedTabIndex = 0;
 
   constructor(
     private authService: AuthService,
@@ -67,9 +68,10 @@ export class ProfileComponent implements OnInit {
     private locationService: LocationService,
     private utilsService: UtilsService,
     private router: Router,
+    private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private postService: PostService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {
     this.profileForm = this.fb.group({
       name: ['', Validators.required],
@@ -119,6 +121,14 @@ export class ProfileComponent implements OnInit {
         this.profileForm.patchValue({ city: '' });
       }
     });
+
+    this.route.queryParams.subscribe(params => {
+      if (params['tab'] === 'compras') {
+        this.selectedTabIndex = 1;
+      } else if (params['tab'] === 'ventas') {
+        this.selectedTabIndex = 2;
+      }
+    });
   }
 
   setCityDisabled() {
@@ -164,10 +174,10 @@ export class ProfileComponent implements OnInit {
     }
   }
 
- loadTransactionHistory(userId: string) {
+  loadTransactionHistory(userId: string) {
     this.isLoadingHistory = true;
     this.isLoadingRatings = true; // Iniciamos la carga
-    
+
     this.postService.getUserSales(userId).subscribe((data) => {
       this.sales = data;
     });
@@ -187,29 +197,39 @@ export class ProfileComponent implements OnInit {
 
   openRatingDialog(transaction: any, myRole: 'buyer' | 'seller') {
     // Definimos a quién estamos calificando según nuestro rol en esa transacción
-    const targetUserId = myRole === 'buyer' ? transaction.sellerId : transaction.buyerId;
-    const targetUserName = myRole === 'buyer' ? transaction.sellerName : transaction.buyerName;
+    const targetUserId =
+      myRole === 'buyer' ? transaction.sellerId : transaction.buyerId;
+    const targetUserName =
+      myRole === 'buyer' ? transaction.sellerName : transaction.buyerName;
 
     const dialogRef = this.dialog.open(RatingDialogComponent, {
-      width: '400px',
+      width: '95vw',
+      maxWidth: '400px',
       data: {
         userName: targetUserName,
         targetUserId: targetUserId,
-        transactionId: transaction.id
-      }
+        transactionId: transaction.id,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         // Si el usuario llenó las estrellas y le dio a enviar, guardamos en BD
-        this.postService.saveRating(transaction.id, targetUserId, result, myRole)
+        this.postService
+          .saveRating(transaction.id, targetUserId, result, myRole)
           .then(() => {
-            this.snackBar.open('¡Calificación enviada con éxito!', 'Cerrar', { duration: 3000 });
+            this.snackBar.open('¡Calificación enviada con éxito!', 'Cerrar', {
+              duration: 3000,
+            });
             // Al usar valueChanges en loadTransactionHistory, la vista se actualizará sola
           })
-          .catch(error => {
+          .catch((error) => {
             console.error('Error al guardar calificación:', error);
-            this.snackBar.open('Hubo un error al enviar la calificación.', 'Cerrar', { duration: 3000 });
+            this.snackBar.open(
+              'Hubo un error al enviar la calificación.',
+              'Cerrar',
+              { duration: 3000 },
+            );
           });
       }
     });
@@ -226,7 +246,9 @@ export class ProfileComponent implements OnInit {
 
   // Funciones útiles para pintar las estrellitas en el HTML
   getStarsArray(rating: number): number[] {
-    return Array(5).fill(0).map((x, i) => i + 1);
+    return Array(5)
+      .fill(0)
+      .map((x, i) => i + 1);
   }
 
   goBack() {

@@ -2,7 +2,13 @@
   max-width: 1000px;
   min-height: 100vh;
   background-color: #fafafa;
-  margin: 0 auto;
+}
+
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #fafafa; 
 }
 
 /* =========================================
@@ -166,6 +172,16 @@
   }
 }
 
+.stat-card.clickable-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:active {
+    transform: scale(0.97);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
 @media (min-width: 600px) {
   /* Ocultamos el header de mobile en pantallas grandes */
   .mobile-header-wrapper {
@@ -185,13 +201,11 @@
     padding: 1rem 0.5rem;
   }
 
-  /* =========================================
-     ESTADÍSTICAS MOBILE (Flexbox para que entren las 3)
-     ========================================= */
   .stats-grid {
     display: flex !important;
     flex-direction: row !important;
     justify-content: space-between !important;
+    align-items: stretch !important;
     gap: 8px !important;
     width: 100% !important;
 
@@ -200,6 +214,7 @@
       min-width: 0 !important;
       display: flex !important;
       flex-direction: column !important;
+      justify-content: flex-start !important;
       align-items: center !important;
       padding: 10px 4px !important;
       border-radius: 8px !important;
@@ -221,6 +236,10 @@
         width: 100% !important;
         min-width: 0 !important;
         text-align: center !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        flex-grow: 1 !important; 
 
         h3 {
           font-size: 1.1rem !important;
@@ -229,12 +248,13 @@
         }
         p {
           font-size: 0.65rem !important;
-          letter-spacing: -0.3px !important;
-          line-height: 1 !important;
+          letter-spacing: -0.2px !important;
+          line-height: 1.1 !important;
           margin: 0 !important;
-          white-space: nowrap !important;
-          overflow: hidden !important;
-          text-overflow: ellipsis !important;
+          
+          white-space: normal !important; 
+          word-break: break-word !important;
+          overflow: visible !important;
         }
       }
     }

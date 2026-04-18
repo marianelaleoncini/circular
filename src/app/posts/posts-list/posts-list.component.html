@@ -1,8 +1,10 @@
-<app-post-card
-  *ngFor="let post of postList; trackBy: trackById"
-  [post]="post"
-  [use]="use"
-></app-post-card>
+<div class="posts-grid">
+  <app-post-card
+    *ngFor="let post of postList; trackBy: trackById"
+    [post]="post"
+    [use]="use"
+  ></app-post-card>
+</div>
 
 <div class="empty-state" *ngIf="postList.length === 0 && !isLoading">
   <mat-icon>search_off</mat-icon>
