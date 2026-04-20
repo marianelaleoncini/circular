@@ -41,7 +41,7 @@ export class HomeComponent implements OnInit {
     private postService: PostService,
     private locationService: LocationService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {
     this.provinces$ = this.locationService.getProvinces();
   }
@@ -103,6 +103,7 @@ export class HomeComponent implements OnInit {
 
     this.isFiltering = !!(
       filters.search ||
+      filters.category ||
       filters.province ||
       filters.city ||
       filters.minPrice != null ||
@@ -117,6 +118,9 @@ export class HomeComponent implements OnInit {
         (post.description &&
           post.description.toLowerCase().includes(searchTerm));
 
+      const matchesCategory =
+        !filters.category || post.category === filters.category;
+
       const matchesProvince =
         !filters.province || post.authorProvince == filters.province;
       const matchesCity = !filters.city || post.authorCity == filters.city;
@@ -127,6 +131,7 @@ export class HomeComponent implements OnInit {
 
       return (
         matchesSearch &&
+        matchesCategory &&
         matchesProvince &&
         matchesCity &&
         matchesMinPrice &&

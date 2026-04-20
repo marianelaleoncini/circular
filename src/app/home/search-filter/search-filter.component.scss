@@ -66,7 +66,13 @@
 
 @media (min-width: 768px) {
   .search-container {
-    padding: 1.5rem 2rem 0 2rem;
+    padding: 1.5rem 1rem 0 rem;
+  }
+
+  .filters-panel {
+    ::ng-deep .mat-expansion-panel-body {
+      padding: 0 6px;
+    }
   }
 
   .main-search-bar .filter-toggle .desktop-only {
@@ -79,7 +85,7 @@
     align-items: baseline;
 
     mat-form-field {
-      width: 200px;
+      width: 190px;
     }
     .price-group {
       width: auto;

@@ -33,6 +33,18 @@ export class SearchFilterComponent implements OnInit {
   filterForm: FormGroup;
   cities: any[] = [];
   isLoadingCities = false;
+   categories = [
+    'Cartón',
+    'Electrónica',
+    'Madera',
+    'Metales',
+    'Neumáticos',
+    'Papel',
+    'Plásticos',
+    'Textiles',
+    'Vidrio',
+    'Otros',
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -40,6 +52,7 @@ export class SearchFilterComponent implements OnInit {
   ) {
     this.filterForm = this.fb.group({
       search: [''],
+      category: [null],
       province: [null],
       city: [null],
       minPrice: [null],
